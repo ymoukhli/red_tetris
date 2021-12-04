@@ -8,10 +8,16 @@ export const StyledGameInterfaceWrapper = styled.div`
     background-color: #333;
     background-image: url(${background});
     overflow: hidden;
+    display: flex;
+    align-items: center;
 `
 
 export const StyledGameInterface = styled.div`
     margin: 0 auto;
     max-width: 960px;
     display: flex;
+    justify-content: center;
+    border: 1px solid black;
+    background-color: #333;
+    padding: 2em;
 `

@@ -2,10 +2,10 @@ import React from "react";
 import { StyledCell } from "../Styles/StyledCell";
 
 
-export default function Cell({width,heigth})
+export default function Cell({width,height,type})
 {
     return (
         <StyledCell width={width}
-        heigth={heigth}>Cell</StyledCell>
+        height={height} type={type}></StyledCell>
     )
 }

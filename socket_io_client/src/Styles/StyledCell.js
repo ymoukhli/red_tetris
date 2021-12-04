@@ -1,8 +1,8 @@
 import styled from "styled-components";
+import { TETRIMINO } from "../Utilitys/tetrimino"
 
 export const StyledCell = styled.div`
-    width: calc(75vh / ${props => props.height});
-    height: calc(75vh / ${props => props.height});
     background-color: coral;
     border: 1px solid black;
-`
+    background-color: rgb(${props => TETRIMINO[props.type].color})
+    `
