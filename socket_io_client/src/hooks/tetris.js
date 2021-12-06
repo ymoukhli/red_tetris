@@ -31,9 +31,10 @@ export const useTetris = () => {
         )
     }, []);
 
-    const rotateTetris = (shape) => {
+    const rotateTetris = (shape , xOffset = 0, yOffset = 0) => {
         setTetris(prev => ({
             ...prev,
+            pos: {x : prev.pos.x + xOffset, y: prev.pos.y + yOffset},
             tetrimino: shape
         }))
     }

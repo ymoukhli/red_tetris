@@ -24,7 +24,6 @@ export default function GameInterface() {
             console.log("unmount gameInterface")
             clearInterval(interval)
         };
-        // const interval = setInterval(() )
     }, [tetris])
 
     
@@ -61,6 +60,18 @@ export default function GameInterface() {
         {
 
             rotateTetris(arr);
+        }
+        else if (!checkColision(1, 0, grid, tetris, arr))
+        {
+            console.log("shifted to the left");
+            rotateTetris(arr, 1);
+
+        }
+        else if (!checkColision(-1, 0, grid, tetris, arr))
+        {
+            rotateTetris(arr, -1);
+
+            console.log("shifted to the right");
         }
         
     }
