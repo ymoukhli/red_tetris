@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { dimenssion } from '../Utilitys/generateGrid';
 import { getRandomTetri, TETRIMINO } from '../Utilitys/tetrimino';
-
+import {rotateArr} from '../Utilitys/utilitys'
 
 export const useTetris = () => {
     const [tetris, setTetris] = useState(
@@ -10,7 +10,7 @@ export const useTetris = () => {
             tetrimino: TETRIMINO[0].shape,
             collided: false
         });
-
+        
     const updateTetrimino = ({x, y, collided}) => {
         console.log("updating Tetris")
         setTetris(prev => ({
@@ -19,6 +19,7 @@ export const useTetris = () => {
             collided
         }))
     }
+    
     const resetTetris = useCallback(() => {
         console.log("reseting tetris")
         setTetris(
@@ -29,5 +30,12 @@ export const useTetris = () => {
             }
         )
     }, []);
-    return [tetris, updateTetrimino, resetTetris];
+
+    const rotateTetris = (shape) => {
+        setTetris(prev => ({
+            ...prev,
+            tetrimino: shape
+        }))
+    }
+    return [tetris, updateTetrimino, resetTetris, rotateTetris];
 }

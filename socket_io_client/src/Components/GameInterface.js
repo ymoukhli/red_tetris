@@ -7,16 +7,32 @@ import { dimenssion, generateGrid } from "../Utilitys/generateGrid";
 import { StyledGameInterface , StyledGameInterfaceWrapper } from "../Styles/StyledGameInterface";
 import {useTetris} from "../hooks/tetris";
 import { useGrid } from "../hooks/grid"
-
+import {checkColision , rotateArr} from "../Utilitys/utilitys";
 
 
 export default function GameInterface() {
 
-    const [tetris, updateTetrimino, resetTetris] = useTetris();
+    const [tetris, updateTetrimino, resetTetris, rotateTetris] = useTetris();
     const [grid, resetGrid] = useGrid(tetris, resetTetris);
+
+    useEffect(() => {
+
+        const interval = setInterval(() => {
+            moveDown()
+        }, 1000);
+        return () => {
+            console.log("unmount gameInterface")
+            clearInterval(interval)
+        };
+        // const interval = setInterval(() )
+    }, [tetris])
 
     
     const moveDown = () => {
+        // if no tetrimino don't update
+        if (tetris.tetrimino.length === 1)
+            return;
+
         const tmp = [];
         tetris.tetrimino.forEach((element, y) => element.forEach((val, x) => {
             if (val != 0)
@@ -24,59 +40,36 @@ export default function GameInterface() {
                 tmp.push({x: tetris.pos.x + x, y: tetris.pos.y + y + 1});
             }
         }))
-        console.log(tmp);
         //   next move is a collision with obstacl or not;
         let collided = tmp.some((element, index) => 
                                         (element.y >= grid.length ||
                                         grid[element.y][element.x][1] === "stay"))  
         
-        // let collided = false;
-        // for (let i = 0; i < tmp.length; i++)
-        // {
-            //     if (tmp[i].y >= grid.length || grid[tmp[i].y][tmp[i].x][1] === "stay")
-            //     {
-                //         collided = true;
-                //         // updateTetrimino({x: 0, y: 0, collided: true});
-                //         break;
-                //     }
-                // }
         if (collided)
         {
             updateTetrimino({x: 0, y: 0, collided: true});
-            // resetTetris();
         }
         else
         {
             updateTetrimino({x: 0, y: 1, collided: false});
         }
     }
-    const checkColision = (dir) => {
-        console.log("cheking - horizantal collision");
-        const arr = tetris.tetrimino;
-        for (let y = 0; y < arr.length; y++)
-        {
-            const nextPosY = y + tetris.pos.y;
-            for (let x = 0; x < arr[y].length; x++)
-            {
-                if (arr[y][x] !== 0)
-                {
-                    const nextPosX = x + tetris.pos.x + dir;
-                    if (nextPosX >= dimenssion.width || nextPosX < 0 || grid[nextPosY][nextPosX][1] === "stay")
-                    {
-                        return 0;
-                    }
-                }       
-            }
-        }
-        return dir;
-    }
 
-    const moveTetrimino = (dir) => {
+    const rotateTetrimino = () => {
+        let arr = rotateArr(tetris.tetrimino)
+        if (!checkColision(0, 0, grid, tetris, arr))
+        {
+
+            rotateTetris(arr);
+        }
+        
+    }
+    const moveTetrimino = (x) => {
 
         // keeps dir value or return 0 if tetrimnos gonna colide with something horizantaly;
-        dir = checkColision(dir);
+        x = checkColision(x, 0, grid, tetris)? 0: x;
 
-        updateTetrimino({x: dir, y: 0, collided: false});
+        updateTetrimino({x, y: 0, collided: false});
     }
     
     const reset = () => {
@@ -85,6 +78,8 @@ export default function GameInterface() {
     }
     const move = ({key}) =>
     {
+        if (tetris.tetrimino.length <= 1)
+        return;
         if (key ==="ArrowRight" || key == "d")
         {
             moveTetrimino(1);
@@ -97,14 +92,11 @@ export default function GameInterface() {
         {
             moveDown();
         }
-
+        else if (key === "ArrowUp" || key === "w")
+        {
+            rotateTetrimino();
+        }
     }
-    // useEffect(() => {
-    //     console.log("updated");
-    //     setGrid({
-            
-    //     });
-    // }, [grid]);
     return (
     <StyledGameInterfaceWrapper onKeyDown={e => move(e)} tabIndex="-1">
         <StyledGameInterface>

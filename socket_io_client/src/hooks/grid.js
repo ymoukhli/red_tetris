@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback} from "react";
-import { generateGrid } from "../Utilitys/generateGrid";
+import { dimenssion, generateGrid } from "../Utilitys/generateGrid";
+import { checkLineInGrid } from "../Utilitys/utilitys";
 export const useGrid = (tetris, resetTetris, updateTetrimino) =>
 {
     const [grid, setGrid] = useState(generateGrid());
@@ -9,12 +10,11 @@ export const useGrid = (tetris, resetTetris, updateTetrimino) =>
         setGrid(prev => updateGrid(prev));
         const updateGrid = (prev) => {
             console.log("use Effect: updating grid");
-            // let newGrid = [...prev];
             // ----- > reset grid < ---------
             
             const newGrid  = prev.map(x => x.map(y => (y[1] === "clear" ? [0,"clear"] : y)));
             
-            // -------- > draw < ----------
+            // ---------------- > draw < ---------------- //
             tetris.tetrimino.forEach((element, y) => {
                 element.forEach((value, x)=> {
                     if (value !== 0)
@@ -27,6 +27,15 @@ export const useGrid = (tetris, resetTetris, updateTetrimino) =>
             {
                 resetTetris();
             }
+
+            // ---------- > delete line if any < --------//
+            const arr = checkLineInGrid(newGrid);
+            for (let i = 0; i < arr.length; i++)
+            {
+                newGrid.splice(arr[i], 1);
+                newGrid.unshift(Array(dimenssion.width).fill([0,'clear']))
+            }
+
             return newGrid;
         }
     }, [tetris])
