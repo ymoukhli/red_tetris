@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback} from "react";
 import { generateGrid } from "../Utilitys/generateGrid";
-
-export const useGrid = (tetris) =>
+export const useGrid = (tetris, resetTetris, updateTetrimino) =>
 {
     const [grid, setGrid] = useState(generateGrid());
 
@@ -9,7 +8,7 @@ export const useGrid = (tetris) =>
     useEffect(() => {
         setGrid(prev => updateGrid(prev));
         const updateGrid = (prev) => {
-            console.log("rendered");
+            console.log("use Effect: updating grid");
             // let newGrid = [...prev];
             // ----- > reset grid < ---------
             
@@ -20,10 +19,14 @@ export const useGrid = (tetris) =>
                 element.forEach((value, x)=> {
                     if (value !== 0)
                     {
-                        newGrid[y + tetris.pos.y][x + tetris.pos.x] = [value, `${tetris.collided? "stay" : "clear"}`]
+                        newGrid[y + tetris.pos.y][x + tetris.pos.x] = [value, tetris.collided? "stay" : "clear"]
                     }
                 });
             });
+            if (tetris.collided)
+            {
+                resetTetris();
+            }
             return newGrid;
         }
     }, [tetris])
