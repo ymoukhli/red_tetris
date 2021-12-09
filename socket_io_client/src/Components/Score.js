@@ -1,9 +1,9 @@
 import React from "react";
 
 
-export default function Score({text, Value = 0})
+export default function Score({text, value = 0})
 {
     return (
-        <div>{text}{Value}</div>
+        <div>{text}{value}</div>
     )
 }

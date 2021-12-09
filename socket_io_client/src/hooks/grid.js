@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback} from "react";
 import { dimenssion, generateGrid } from "../Utilitys/generateGrid";
-import { checkLineInGrid } from "../Utilitys/utilitys";
+import { checkColision, checkLineInGrid } from "../Utilitys/utilitys";
+import { getRandomTetri } from "../Utilitys/tetrimino"
 
-export const useGrid = (tetris, resetTetris, updateTetrimino) =>
+export const useGrid = (tetris, resetTetris, onLinesDestroy, updateLineScore, updateGameOver) =>
 {
     const [grid, setGrid] = useState(generateGrid());
 
-    
     useEffect(() => {
         setGrid(prev => updateGrid(prev));
         const updateGrid = (prev) => {
@@ -26,11 +26,26 @@ export const useGrid = (tetris, resetTetris, updateTetrimino) =>
             });
             if (tetris.collided)
             {
+                if (checkColision(0,0,grid,
+                    {
+                        pos: {x: dimenssion.width /2, y: 0},
+                        tetrimino: getRandomTetri().shape,
+                        collided: false
+                    }))
+                    {
+                        updateGameOver(true);
+                    }
+
                 resetTetris();
             }
 
-            // ---------- > delete line if any < --------//
+            // ---------- > delete line if any and update score and row < --------//
             const arr = checkLineInGrid(newGrid);
+            if (arr.length >= 1)
+            {
+                onLinesDestroy(arr.length);
+                updateLineScore(arr.length);
+            }
             for (let i = 0; i < arr.length; i++)
             {
                 newGrid.splice(arr[i], 1);
