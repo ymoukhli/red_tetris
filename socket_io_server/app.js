@@ -5,6 +5,7 @@ const socketIo = require("socket.io");
 const cors = require("cors")
 const port = process.env.PORT || 4001;
 const index = require("./routes/index");
+const { GameManager } = require("./utilitys/GameManger");
 const router = express.Router();
 
 const app = express();
@@ -23,6 +24,7 @@ let interval;
 
 io.on("connection", (socket) => {
   console.log("New client connected");
+  const game = new GameManager(socket);
   // if (interval) {
   //   clearInterval(interval);
   // }
@@ -31,7 +33,20 @@ io.on("connection", (socket) => {
   //   console.log("Client disconnected");
   //   clearInterval(interval);
   // });
+  socket.on("move", (data) => {
+    
+    if (game.move(data.x,data.y))
+    {
+      socket.emit("respond", game.Grid);
+      console.log("emiting \"respond\"")
+    }
+    console.log("moveRight");
+  })
+  socket.on("Rotate", (sok) => {
+    console.log("Rotate");
+  })
 });
+
 
 const getApiAndEmit = socket => {
   const response = new Date();

@@ -41,8 +41,11 @@ export const useGrid = (tetris, resetTetris, updateTetrimino) =>
         }
     }, [tetris])
     
+    const setBackendGrid = (backendGrid) => {
+        setGrid(backendGrid)
+    }
     const resetGrid = () => {
 
     }
-    return [grid, resetGrid];
+    return [grid, resetGrid, setBackendGrid];
 }

@@ -10,10 +10,10 @@ import { useGrid } from "../hooks/grid"
 import {checkColision , rotateArr} from "../Utilitys/utilitys";
 
 
-export default function GameInterface() {
+export default function GameInterface({ io }) {
 
     const [tetris, updateTetrimino, resetTetris, rotateTetris] = useTetris();
-    const [grid, resetGrid] = useGrid(tetris, resetTetris);
+    const [grid, resetGrid, setBackendGrid] = useGrid(tetris, resetTetris);
 
     useEffect(() => {
 
@@ -93,20 +93,25 @@ export default function GameInterface() {
         return;
         if (key ==="ArrowRight" || key == "d")
         {
+            io.emit("move", {x: 1, y: 0});
             moveTetrimino(1);
         }
         else if (key === "ArrowLeft" || key === "a")
         {
+            io.emit("move", {x: -1, y: 0});
             moveTetrimino(-1);
         }
         else if (key === "ArrowDown" || key === "s")
         {
+            io.emit("move", {x: 0, y: 1});
             moveDown();
         }
         else if (key === "ArrowUp" || key === "w")
         {
+            io.emit("Rotate", {x: 30, y: { y1: 10, y2: 20}})
             rotateTetrimino();
         }
+        io.on("respond", ans => setBackendGrid(ans.playground));
     }
     return (
     <StyledGameInterfaceWrapper onKeyDown={e => move(e)} tabIndex="-1">
