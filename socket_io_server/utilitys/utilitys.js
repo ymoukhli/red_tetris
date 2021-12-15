@@ -1,4 +1,4 @@
-export const rotateArr = (arr)=> {
+const rotateArr = (arr)=> {
     if (!arr)
         return ;
     const tmp = [];
@@ -16,14 +16,18 @@ export const rotateArr = (arr)=> {
     return tmp;
 }
 
-export const checkLineInGrid = (grid) => {
+const checkLineInGrid = (grid) => {
     
     let arr = [];
-    for (let y = 0; y < grid.height; y++)
+    let height = grid.length;
+    let width = grid[0].length
+    console.log("checking", height, width)
+    for (let y = 0; y < height; y++)
     {
-        for (let x = 0; x < grid.width && grid[y][x][1] === "stay"; x++)
+        for (let x = 0; x < width && grid[y][x][1] === "stay"; x++)
         {
-            if (x + 1 >= grid.width)
+            console.log(x);
+            if (x + 1 >= width)
             {
                 arr.push(y);
             }
@@ -32,7 +36,7 @@ export const checkLineInGrid = (grid) => {
     return arr;
 }
 
-export const checkColision = (xOffset, yOffset,grid, tetris, arr = tetris.tetrimino) => {
+const checkColision = (xOffset, yOffset,grid, tetris, arr = tetris.tetrimino) => {
     for (let y = 0; y < arr.length; y++)
     {
         const nextPosY = y + tetris.pos.y + yOffset;
@@ -50,3 +54,5 @@ export const checkColision = (xOffset, yOffset,grid, tetris, arr = tetris.tetrim
     }
     return false;
 }
+
+module.exports = { rotateArr, checkLineInGrid }
