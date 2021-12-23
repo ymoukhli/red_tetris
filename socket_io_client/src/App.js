@@ -13,9 +13,6 @@ function App() {
     socket.on("FromAPI", data => {
       setResponse(data);
     });
-    socket.on("respond", data => console.log("RESSPONDING"));
-  // useEffect(() => {
-  // }, []);
 
   return (
       <GameInterface io={socket}></GameInterface>

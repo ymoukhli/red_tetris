@@ -21,12 +21,10 @@ const checkLineInGrid = (grid) => {
     let arr = [];
     let height = grid.length;
     let width = grid[0].length
-    console.log("checking", height, width)
     for (let y = 0; y < height; y++)
     {
         for (let x = 0; x < width && grid[y][x][1] === "stay"; x++)
         {
-            console.log(x);
             if (x + 1 >= width)
             {
                 arr.push(y);

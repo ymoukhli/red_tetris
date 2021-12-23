@@ -9,7 +9,7 @@ const { GameManager } = require("./utilitys/GameManger");
 const router = express.Router();
 
 const app = express();
-
+const users = [];
 app.use(index);
 
 const server = http.createServer(app);
@@ -20,11 +20,12 @@ const io = socketIo(server, {
   }
 });
 
-let interval;
 
 
 io.on("connection", (socket) => {
   console.log("New client connected");
+
+  let interval;
   const game = new GameManager(socket);
 
   socket.on("move", (data) => {
@@ -32,41 +33,39 @@ io.on("connection", (socket) => {
     if (game.move(data.x,data.y))
     {
       socket.emit("respond", game.Grid);
-      console.log("emiting \"respond\"")
     }
-    console.log("moveRight");
   })
+
   socket.on("Rotate", (sok) => {
     if (game.rotate())
     {
       socket.emit("respond", game.Grid);
     }
-    console.log("Rotate");
   })
+
   socket.on("start", (data) => {
     interval = setInterval(() => {
-      console.log(socket.id)
       game.move();
       socket.emit("respond", game.Grid);
     }, 1000)
   })
 
+  socket.on("joinRoom", data => {
+    // add checker
+    users.push({username: data.username, room: data.room});
+    socket.join(data.room);
+    socket.emit("joined");
+  })
 
   socket.on("disconnect", () => {
     if (interval)
       clearInterval(interval);
   });
+  
   socket.on("end", (data) => {
     if (interval)
       clearInterval(interval);
   })
 });
-
-
-const getApiAndEmit = socket => {
-  const response = new Date();
-  // Emitting a new message. Will be consumed by the client
-  socket.emit("FromAPI", response);
-};
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

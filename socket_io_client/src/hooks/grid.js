@@ -51,17 +51,13 @@ export const useGrid = (tetris, resetTetris, onLinesDestroy, updateLineScore, up
                 newGrid.splice(arr[i], 1);
                 newGrid.unshift(Array(dimenssion.width).fill([0,'clear']))
             }
-
             return newGrid;
         }
     }, [tetris])
     
     const setBackendGrid = (backendGrid) => {
-        console.log("Updating backendGrid")
         setGrid(backendGrid)
     }
-    const resetGrid = () => {
-
-    }
+    
     return [grid, setBackendGrid];
 }

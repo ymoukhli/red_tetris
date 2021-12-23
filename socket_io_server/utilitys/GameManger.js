@@ -33,14 +33,12 @@ const GameManager = class {
         
         if (this.Player.collided)
         {
-            console.log(newGrid);
             const arr = checkLineInGrid(newGrid);
             for (let i = 0; i < arr.length; i++)
             {
                 newGrid.splice(arr[i], 1);
                 newGrid.unshift(Array(newGrid[0].length).fill([0,'clear']))
             }
-            console.log("player collided");
             this.Player = this.newPlayer();
         }
 

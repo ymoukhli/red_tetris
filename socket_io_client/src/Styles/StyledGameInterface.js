@@ -10,6 +10,7 @@ export const StyledGameInterfaceWrapper = styled.div`
     overflow: hidden;
     display: flex;
     align-items: center;
+    
 `
 
 export const StyledGameInterface = styled.div`

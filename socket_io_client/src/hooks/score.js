@@ -9,7 +9,6 @@ export const useScore = () => {
         {
             sum += i * 10 + line * 4;
         }
-        console.log(`setting score: ${sum}`)
         setScore(prev => prev + sum);
     }
     return [score, onLinesDestroy]
