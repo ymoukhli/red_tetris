@@ -11,7 +11,9 @@ import {useLineScore} from "../hooks/lineScore"
 import { useScore } from "../hooks/score";
 import {checkColision , rotateArr} from "../Utilitys/utilitys";
 import JoinGame from "./JoinGame";
-
+import { StyledDisplay } from "../Styles/StyledDisplay";
+import { StyledDisplayCard } from "../Styles/StyledDisplayCard";
+import MasterDisplay from "../Components/MasterDisplay"
 
 export default function GameInterface({ io }) {
 
@@ -76,15 +78,9 @@ export default function GameInterface({ io }) {
 
         {/* playground area */}
         {joined && <StyledGameInterface>
-            <Playground grid={grid}></Playground>
-            <div>
-                <Display></Display>
-                <div>
-                    <Score text="Score : " value={score}></Score>
-                    <Score text="Rows : " value={lineScore}></Score>
-                    <Button onClick={reset} text="Start Game"></Button>
-                </div>
-            </div>
+            <MasterDisplay grid={grid} score={score} lineScore={lineScore} reset={reset}> 
+            </MasterDisplay>
+            <StyledDisplayCard></StyledDisplayCard>
         </StyledGameInterface>}
         {gameOver && <div>soso</div>}
         {/* <div style="background-color: coral; padding: 5em; border:4px solid black;border-radius: 50%">GameOver</div>} */}

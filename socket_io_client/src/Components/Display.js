@@ -1,9 +1,9 @@
 import React from "react";
-
+import { StyledDisplay } from "../Styles/StyledDisplay"
 
 export default function Display()
 {
     return (
-        <div>Display</div>
+        <StyledDisplay>Display</StyledDisplay>
     )
 }

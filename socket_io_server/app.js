@@ -26,6 +26,7 @@ io.on("connection", (socket) => {
   console.log("New client connected");
 
   let interval;
+  
   const game = new GameManager(socket);
 
   socket.on("move", (data) => {
