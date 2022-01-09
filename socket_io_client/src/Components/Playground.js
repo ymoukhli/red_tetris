@@ -7,7 +7,7 @@ import Cell from "./Cell";
 export default function Playground({grid})
 {
     return (
-        <StyledPlayground height={dimenssion.height} width={dimenssion.width} >
+        <StyledPlayground height={dimenssion.height} width={dimenssion.width}>
             {grid.map(x => x.map((y,i) => <Cell
              key={i} 
              type={y[0]} 

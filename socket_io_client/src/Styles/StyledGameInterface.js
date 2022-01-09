@@ -6,6 +6,7 @@ export const StyledGameInterfaceWrapper = styled.div`
     width: 100vw;
     height: 100vh;
     background-color: #333;
+    background-size: cover;
     background-image: url(${background});
     overflow: hidden;
     display: flex;
