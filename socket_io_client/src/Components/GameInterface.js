@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Display from "./Display";
 import Playground from "./Playground";
+import PlaygroundTest from "./PlaygroundTest";
 import Button from "./Button";
 import Score from "./Score";
 import { dimenssion, generateGrid } from "../Utilitys/generateGrid";
@@ -14,6 +15,8 @@ import JoinGame from "./JoinGame";
 import { StyledDisplay } from "../Styles/StyledDisplay";
 import { StyledDisplayCard } from "../Styles/StyledDisplayCard";
 import MasterDisplay from "../Components/MasterDisplay"
+import Nav from "../Components/Nav"
+import DisplayForOther from "./DisplayForOther";
 
 export default function GameInterface({ io }) {
 
@@ -24,6 +27,7 @@ export default function GameInterface({ io }) {
     const [score, onLinesDestroy] = useScore();
     const [joined, setJoined] = useState(false);
     const [started, setStarted] = useState(false);
+    const [room, setRoom] = useState([]);
     
     const [otherGrid, setOtherGrid] = useState([]);
 
@@ -59,10 +63,10 @@ export default function GameInterface({ io }) {
             io.emit("end");
         }
     }
-
-    io.on("joined", (num) => {
+    io.on("joined", (room) => {
         
         setJoined(true);
+        setRoom(room)
         console.log("joined")
     })
     io.on("respond", ans => 
@@ -78,9 +82,13 @@ export default function GameInterface({ io }) {
 
         {/* playground area */}
         {joined && <StyledGameInterface>
-            <MasterDisplay grid={grid} score={score} lineScore={lineScore} reset={reset}> 
-            </MasterDisplay>
-            <StyledDisplayCard></StyledDisplayCard>
+            <Nav room={room} io={io}></Nav>
+            <MasterDisplay grid={grid} score={score} lineScore={lineScore} reset={reset}></MasterDisplay>
+            {/* <Playground grid={grid}></Playground> */}
+            {/* <Playground grid={grid}></Playground> */}
+            {/* <Playground grid={grid}></Playground>
+            <Playground grid={grid}></Playground> */}
+            {/* <DisplayForOther grid={grid}></DisplayForOther> */}
         </StyledGameInterface>}
         {gameOver && <div>soso</div>}
         {/* <div style="background-color: coral; padding: 5em; border:4px solid black;border-radius: 50%">GameOver</div>} */}

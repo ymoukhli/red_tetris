@@ -7,9 +7,11 @@ const port = process.env.PORT || 4001;
 const index = require("./routes/index");
 const { GameManager } = require("./utilitys/GameManger");
 const router = express.Router();
-
+const  {joinRoom} = require("./utilitys/utilitys");
+const { format } = require("path");
 const app = express();
-const users = [];
+const users = {};
+const rooms = {};
 app.use(index);
 
 const server = http.createServer(app);
@@ -21,7 +23,17 @@ const io = socketIo(server, {
 });
 
 
-
+const removeFromRoom = (id) =>
+{
+  for (const [key, value] of Object.entries(rooms))
+  {
+    if (value.find(e => e.id === id))
+    {
+      rooms[key].splice(rooms[key].indexOf(rooms[key].find(e => e.id === id)), 1)
+      return key;
+    }
+  }
+}
 io.on("connection", (socket) => {
   console.log("New client connected");
 
@@ -53,20 +65,34 @@ io.on("connection", (socket) => {
 
   socket.on("joinRoom", data => {
     // add checker
-    users.push({username: data.username, room: data.room});
-    socket.join(data.room);
-    socket.emit("joined");
+    users[socket.socket_id]={username: data.username, room: data.room};
+    if (!joinRoom(rooms, data, socket.id) && rooms[data.room].length < 4)
+    {
+      socket.join(data.room);
+      io.to(data.room).emit("joined", rooms[data.room]);
+      console.log(`player joined room ${data.room}`)
+    }
   })
 
   socket.on("disconnect", () => {
+    console.log('user disconect -->', io.sockets.adapter.rooms);
+    for (let i = 0; i <  socket.adapter.rooms.length; i++) {
+      const element =  socket.adapter.rooms[i];
+      console.log('->', element);
+    }
     if (interval)
       clearInterval(interval);
+      
+      const room = removeFromRoom(socket.id);
+      io.to(room).emit("joined", rooms[room]);
   });
   
-  socket.on("end", (data) => {
+  socket.on("end", () => {
     if (interval)
       clearInterval(interval);
-  })
+    const room = removeFromRoom(socket.id);
+    io.to(room).emit("joined", rooms[room]);
+    })
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

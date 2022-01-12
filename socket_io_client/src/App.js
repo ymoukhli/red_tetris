@@ -10,9 +10,6 @@ function App() {
   
   
     const socket = io(ENDPOINT);
-    socket.on("FromAPI", data => {
-      setResponse(data);
-    });
 
   return (
       <GameInterface io={socket}></GameInterface>

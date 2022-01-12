@@ -52,5 +52,16 @@ const checkColision = (xOffset, yOffset,grid, tetris, arr = tetris.tetrimino) =>
     }
     return false;
 }
-
-module.exports = { rotateArr, checkLineInGrid }
+const joinRoom = (rooms, {room, username}, id) => {
+    if (!rooms.hasOwnProperty(room))
+    {
+        rooms[room] = [];
+    }
+    if (rooms[room].find(e => e.username === username) !== undefined)
+    {
+        return -1;
+    }
+    rooms[room].push({ username , score: 0, lines: 0, id});
+    return 0;
+}
+module.exports = { rotateArr, checkLineInGrid , joinRoom}

@@ -10,12 +10,17 @@ export const StyledGameInterfaceWrapper = styled.div`
     background-image: url(${background});
     overflow: hidden;
     display: flex;
-    align-items: center;
-    
+    justify-content: center;
 `
 
 export const StyledGameInterface = styled.div`
-    margin: 0 auto;
+    width: 100vw;
+    height: 100vh;  
     border: 1px solid black;
     background-color: #f00;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    justify-content: center;
+    align-items: center;
 `

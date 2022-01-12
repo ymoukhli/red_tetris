@@ -10,14 +10,6 @@ export default function MasterDisplay({grid, score, lineScore, reset})
     return (
     <StyledMasterDisplay>
         <Playground grid={grid}></Playground>
-        <div>
-            <Display></Display>
-            <div>
-                <Score text="Score : " value={score}></Score>
-                <Score text="Rows : " value={lineScore}></Score>
-                <Button onClick={reset} text="Start Game"></Button>
-            </div>
-        </div>
     </StyledMasterDisplay>
     )
 }         
