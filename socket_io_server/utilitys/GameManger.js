@@ -47,7 +47,8 @@ const GameManager = class {
                 playground : this.Grid.playground,
                 lines: this.lines,
                 score: this.score,
-                username: this.username
+                username: this.username,
+                id: this.socket.id
             })
 
 

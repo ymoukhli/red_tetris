@@ -22,9 +22,7 @@ export default function GameInterface({ io }) {
 
     const [tetris, updateTetrimino, resetTetris, rotateTetris] = useTetris();
     const [grid, setBackendGrid] = useGrid(tetris, resetTetris);
-    const [lineScore] = useLineScore();
     const [gameOver, setGameOver] = useState(false);
-    const [score, onLinesDestroy] = useScore();
     const [joined, setJoined] = useState(false);
     const [started, setStarted] = useState(false);
     const [room, setRoom] = useState([]);
@@ -40,6 +38,15 @@ export default function GameInterface({ io }) {
         //     setStarted(true)
         // }
     }
+     
+    const handleSubmit = (e) => {
+        console.log("joining");
+        e.preventDefault()
+        console.log("joining");
+        io.emit("joinRoom", {username: e.target.username.value, room: e.target.room.value})
+        setJoined(true);
+    }
+
     const move = ({key}) =>
     {
         if (!joined) return ;
@@ -73,7 +80,7 @@ export default function GameInterface({ io }) {
     <StyledGameInterfaceWrapper onKeyDown={e => move(e)} tabIndex="-1">
         
         {/* playground grid*/}
-        {!joined && <JoinGame io={io}></JoinGame>}
+        {!joined && <JoinGame io={io} handleSubmit={handleSubmit}></JoinGame>}
 
         {/* playground area */}
         {joined && <StyledGameInterface>

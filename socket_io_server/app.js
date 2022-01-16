@@ -41,6 +41,7 @@ const addUser = (id, room, username) => {
   locked[room] = false;
   rooms[room].push({id, username});
   users[id] = { room, username};
+  console.log(users);
 }
 const userExist = (room, username) => {
   if (!rooms[room]) return false;
@@ -69,8 +70,8 @@ io.on("connection", (socket) => {
   })
 
   socket.on("start", () => {
-    if (locked[users[socket.id].room]) return ;
-      locked[users[socket.id].room] = true;
+    if (locked[users[socket.id]].room) return ;
+      locked[users[socket.id]].room = true;
       io.to(users[socket.id].room).emit("startGame");
     })
   socket.on("gameStarted", () => {
@@ -81,22 +82,33 @@ io.on("connection", (socket) => {
   })
   socket.on("joinRoom", ({username, room}) => {
     // join room 
-    if (!username || !room || (locked[room] && locked[room] === false)) return ;
+    console.log(`${username} joining room : ${room}`)
+    
+    if (!username || !room) return ;
+    console.log(`${username} joining room : ${room}`)
     addUser(socket.id, room, username);
     socket.join(room);
-    addData(room, username)
+    game.addData(room, username)
 
       io.to(room).emit("joined", {
         playground : game.Grid.playground,
         lines: game.lines,
         score: game.score,
-        username: game.username
+        username: game.username,
+        id: socket.id,
       });
 
   })
 
   socket.on("disconnect", () => {
     // disconnect
+    if (!users[socket.id]) return ;
+    io.to(users[socket.id].room).emit("left", {
+      lines: game.lines,
+      score: game.score,
+      username: game.username,
+      id: socket.id
+    });
     removeUser(socket.id);
   });
   
