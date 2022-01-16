@@ -10,8 +10,9 @@ const router = express.Router();
 const  {joinRoom} = require("./utilitys/utilitys");
 const { format } = require("path");
 const app = express();
-const users = {};
 const rooms = {};
+const locked = {};
+const users = {};
 app.use(index);
 
 const server = http.createServer(app);
@@ -22,77 +23,83 @@ const io = socketIo(server, {
   }
 });
 
-
-const removeFromRoom = (id) =>
-{
-  for (const [key, value] of Object.entries(rooms))
+const removeUser = (id) => {
+  if (users[id])
   {
-    if (value.find(e => e.id === id))
-    {
-      rooms[key].splice(rooms[key].indexOf(rooms[key].find(e => e.id === id)), 1)
-      return key;
-    }
+    rooms[users[id].room] =  rooms[users[id].room].filter(e => e.id !== id);
+    delete locked[users[id].room];
+    delete users[id];
   }
 }
+
+const addUser = (id, room, username) => {
+  if (!userExist(room, username)) return ;
+  if (!rooms[room])
+  {
+    rooms[room] = [];
+  }
+  locked[room] = false;
+  rooms[room].push({id, username});
+  users[id] = { room, username};
+}
+const userExist = (room, username) => {
+  if (!rooms[room]) return false;
+  return Boolean(rooms[room].find(e => e.username === username));
+}
+const usersInRoom = (room) => rooms[room] ? rooms[room].length : 0;
+
 io.on("connection", (socket) => {
   console.log("New client connected");
-
   let interval;
   
-  const game = new GameManager(socket);
+  const game = new GameManager(socket, io);
 
   socket.on("move", (data) => {
-    
     if (game.move(data.x,data.y))
     {
-      socket.emit("respond", game.Grid);
+      socket.emit("respond", game.Grid.playground);
     }
   })
 
-  socket.on("Rotate", (sok) => {
+  socket.on("rotate", (sok) => {
     if (game.rotate())
     {
-      socket.emit("respond", game.Grid);
+      socket.emit("respond", game.Grid.playground);
     }
   })
 
-  socket.on("start", (data) => {
+  socket.on("start", () => {
+    if (locked[users[socket.id].room]) return ;
+      locked[users[socket.id].room] = true;
+      io.to(users[socket.id].room).emit("startGame");
+    })
+  socket.on("gameStarted", () => {
     interval = setInterval(() => {
       game.move();
-      socket.emit("respond", game.Grid);
-    }, 1000)
+      socket.emit("respond", game.Grid.playground);
+    }, 1000);
   })
+  socket.on("joinRoom", ({username, room}) => {
+    // join room 
+    if (!username || !room || (locked[room] && locked[room] === false)) return ;
+    addUser(socket.id, room, username);
+    socket.join(room);
+    addData(room, username)
 
-  socket.on("joinRoom", data => {
-    // add checker
-    users[socket.socket_id]={username: data.username, room: data.room};
-    if (!joinRoom(rooms, data, socket.id) && rooms[data.room].length < 4)
-    {
-      socket.join(data.room);
-      io.to(data.room).emit("joined", rooms[data.room]);
-      console.log(`player joined room ${data.room}`)
-    }
+      io.to(room).emit("joined", {
+        playground : game.Grid.playground,
+        lines: game.lines,
+        score: game.score,
+        username: game.username
+      });
+
   })
 
   socket.on("disconnect", () => {
-    console.log('user disconect -->', io.sockets.adapter.rooms);
-    for (let i = 0; i <  socket.adapter.rooms.length; i++) {
-      const element =  socket.adapter.rooms[i];
-      console.log('->', element);
-    }
-    if (interval)
-      clearInterval(interval);
-      
-      const room = removeFromRoom(socket.id);
-      io.to(room).emit("joined", rooms[room]);
+    // disconnect
+    removeUser(socket.id);
   });
   
-  socket.on("end", () => {
-    if (interval)
-      clearInterval(interval);
-    const room = removeFromRoom(socket.id);
-    io.to(room).emit("joined", rooms[room]);
-    })
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

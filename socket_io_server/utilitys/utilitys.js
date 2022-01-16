@@ -52,6 +52,9 @@ const checkColision = (xOffset, yOffset,grid, tetris, arr = tetris.tetrimino) =>
     }
     return false;
 }
+
+
+
 const joinRoom = (rooms, {room, username}, id) => {
     if (!rooms.hasOwnProperty(room))
     {

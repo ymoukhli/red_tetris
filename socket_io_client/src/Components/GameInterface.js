@@ -32,12 +32,13 @@ export default function GameInterface({ io }) {
     const [otherGrid, setOtherGrid] = useState([]);
 
     const reset = () => {
-        if (!started)
-        {
-            console.log(started)
-            setStarted(true)
-            io.emit("start");
-        }
+
+        io.emit("start");
+        // if (!started)
+        // {
+        //     console.log(started)
+        //     setStarted(true)
+        // }
     }
     const move = ({key}) =>
     {
@@ -63,15 +64,9 @@ export default function GameInterface({ io }) {
             io.emit("end");
         }
     }
-    io.on("joined", (room) => {
-        
-        setJoined(true);
-        setRoom(room)
-        console.log("joined")
-    })
-    io.on("respond", ans => 
+    io.on("respond", data => 
     {
-        setBackendGrid(ans.playground)
+        setBackendGrid(data);
     });
 
     return (
@@ -82,13 +77,10 @@ export default function GameInterface({ io }) {
 
         {/* playground area */}
         {joined && <StyledGameInterface>
-            <Nav room={room} io={io}></Nav>
-            <MasterDisplay grid={grid} score={score} lineScore={lineScore} reset={reset}></MasterDisplay>
+            <Nav room={room} io={io} reset={reset}></Nav>
+            <MasterDisplay grid={grid}></MasterDisplay>
             {/* <Playground grid={grid}></Playground> */}
-            {/* <Playground grid={grid}></Playground> */}
-            {/* <Playground grid={grid}></Playground>
-            <Playground grid={grid}></Playground> */}
-            {/* <DisplayForOther grid={grid}></DisplayForOther> */}
+            <DisplayForOther io={io}></DisplayForOther>
         </StyledGameInterface>}
         {gameOver && <div>soso</div>}
         {/* <div style="background-color: coral; padding: 5em; border:4px solid black;border-radius: 50%">GameOver</div>} */}

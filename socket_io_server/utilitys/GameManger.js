@@ -7,12 +7,19 @@ const GameManager = class {
     newPlayer = () => new Player(12 / 2, 0, getRandomTetri());
 
     // ---------- constructor ------- ///
-    constructor(socket)
+    constructor(socket, io)
     {
         this.Player = this.newPlayer();
         this.Grid = new Grid(12, 20);
         this.socket = socket;
+        this.io = io;
+        this.lines = 0;
+        this.score = 0;
+        this.room = "";
+        this.username = "";
     }
+
+    addData = (room , username) => {this.room = room; this.username = username};
 
     updateGrid = () =>
     {
@@ -34,8 +41,19 @@ const GameManager = class {
         if (this.Player.collided)
         {
             const arr = checkLineInGrid(newGrid);
+            this.lines += arr.length;
+
+            this.io.to(this.room).emit("collided", {
+                playground : this.Grid.playground,
+                lines: this.lines,
+                score: this.score,
+                username: this.username
+            })
+
+
             for (let i = 0; i < arr.length; i++)
             {
+                this.score += i * 10 + arr.length * 3;
                 newGrid.splice(arr[i], 1);
                 newGrid.unshift(Array(newGrid[0].length).fill([0,'clear']))
             }
@@ -66,12 +84,14 @@ const GameManager = class {
     }
 
     rotate = () => {
+
         if (this.Player.rotatePlayer(0,0,this.Grid))
         {
             this.Grid.playground = this.updateGrid();
             return true;
         }
         return false;
+        
     }
 }
 
