@@ -38,7 +38,7 @@ export default function GameInterface({ io }) {
         //     setStarted(true)
         // }
     }
-     
+    io.on("startGame", () => io.emit("gameStarted"))
     const handleSubmit = (e) => {
         console.log("joining");
         e.preventDefault()

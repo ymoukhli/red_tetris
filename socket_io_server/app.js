@@ -9,12 +9,22 @@ const { GameManager } = require("./utilitys/GameManger");
 const router = express.Router();
 const  {joinRoom} = require("./utilitys/utilitys");
 const { format } = require("path");
+const { clearInterval } = require("timers");
 const app = express();
 const rooms = {};
 const locked = {};
 const users = {};
+
 app.use(index);
 
+const logAll = () => {
+
+  console.log(`********************************`)
+  console.log(`locked room :`,locked)
+  console.log(`rooms :`, rooms)
+  console.log(`users :`, users)
+  console.log(`*********||||||||||||||*********`)
+}
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors : {
@@ -33,11 +43,12 @@ const removeUser = (id) => {
 }
 
 const addUser = (id, room, username) => {
-  if (!userExist(room, username)) return ;
+  if (userExist(room, username)) return ;
   if (!rooms[room])
   {
     rooms[room] = [];
   }
+  console.log("ADDING")
   locked[room] = false;
   rooms[room].push({id, username});
   users[id] = { room, username};
@@ -70,8 +81,8 @@ io.on("connection", (socket) => {
   })
 
   socket.on("start", () => {
-    if (locked[users[socket.id]].room) return ;
-      locked[users[socket.id]].room = true;
+    if (locked[users[socket.id]]) return ;
+      locked[users[socket.id].room] = true;
       io.to(users[socket.id].room).emit("startGame");
     })
   socket.on("gameStarted", () => {
@@ -81,11 +92,8 @@ io.on("connection", (socket) => {
     }, 1000);
   })
   socket.on("joinRoom", ({username, room}) => {
-    // join room 
-    console.log(`${username} joining room : ${room}`)
     
     if (!username || !room) return ;
-    console.log(`${username} joining room : ${room}`)
     addUser(socket.id, room, username);
     socket.join(room);
     game.addData(room, username)
@@ -109,9 +117,12 @@ io.on("connection", (socket) => {
       username: game.username,
       id: socket.id
     });
+    logAll();
+    socket.leave(users[socket.id].room);
     removeUser(socket.id);
+    clearInterval(interval);
   });
-  
+  socket.on("end", () => console.log("ended *********************"))
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
