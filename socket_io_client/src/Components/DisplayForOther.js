@@ -3,32 +3,40 @@ import {StyledDisplayForOther} from "../Styles/StyledDisplayForOther"
 import DisplayCard from "./DisplayCard";
 export default function DisplayForOther({io})
 {
-    const [grids, setGrids] = useState([]);
+    const [grids, setGrids] = useState({});
 
-    io.on("joined", ({playground, id}) => {
-        if (Boolean(grids.find((e) => e.id === id))) return ;
-        const tmp = [...grids]
-        tmp.push({id, playground})
+    io.on("joined", (data) => {
+        const tmp = {...grids}
+        console.log('data :', data);
+        for (let i = 0; i < data.length; i++)
+        {
+            const ele = data[i]
+            console.log('ele', ele);
+            if (ele.id === io.id) continue;
+            tmp[ele.id] = ele.playground;
+        }
         setGrids(tmp);
     })
    
     io.on("left", ({id}) => {
-        const tmp = [...grids]
+        const tmp = {...grids}
         const arr = tmp.filter((e) => e.id !== id);
         setGrids(arr);
     })
 
     io.on("collided", ({id, playground}) => {
-        if (io.id === id) return;
-        const tmp = [...grids]
-        const arr = tmp.find((e) => e.id === id);
-        if (arr)
+        console.log(id === io.id)
+        if (id === io.id) return;
+        const tmp = {...grids};
+        if (tmp[id])
         {
-            arr.playground = playground;
+            tmp[id] = playground;
             setGrids(tmp);
         }
+        console.log("tmp " , tmp)
+        console.log("grids " , grids)
     })
-    const display = grids.map(e => <DisplayCard grid={e.playground}></DisplayCard>)
+    const display = Object.values(grids).map(grid => <DisplayCard grid={grid}></DisplayCard>)
     return (<StyledDisplayForOther>
         {display}
     </StyledDisplayForOther>)

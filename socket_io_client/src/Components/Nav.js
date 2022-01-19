@@ -20,11 +20,13 @@ export default function Nav({io, reset}) {
     // ******************* |||| ******************* //
 
     const [room, setRoom] = useState([]);
-    io.on("joined", ({lines, score, username}) => {
-        console.log(`${username} joined the room`);
-        if (Boolean(room.find(e => e.username === username))) return ;
-        const arr = [...room];
-        arr.push({ username, score, lines });
+    io.on("joined", (users) => {
+
+        const arr = [];
+        for (let user in users)
+        {
+            arr.push({username : users[user].username, score : users[user].score, lines: users[user].score});
+        }
         setRoom(arr);
         
     })

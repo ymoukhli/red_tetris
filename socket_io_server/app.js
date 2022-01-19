@@ -10,6 +10,7 @@ const router = express.Router();
 const  {joinRoom} = require("./utilitys/utilitys");
 const { format } = require("path");
 const { clearInterval } = require("timers");
+const { truncate } = require("fs");
 const app = express();
 const rooms = {};
 const locked = {};
@@ -42,17 +43,18 @@ const removeUser = (id) => {
   }
 }
 
-const addUser = (id, room, username) => {
-  if (userExist(room, username)) return ;
+const addUser = (id, room, username, playground, lines, score) => {
+  if (userExist(room, username)) return false;
   if (!rooms[room])
   {
     rooms[room] = [];
   }
   console.log("ADDING")
   locked[room] = false;
-  rooms[room].push({id, username});
-  users[id] = { room, username};
+  rooms[room].push({id, username, playground, lines, score});
+  users[id] = { room, username, playground, lines, score};
   console.log(users);
+  return true;
 }
 const userExist = (room, username) => {
   if (!rooms[room]) return false;
@@ -86,6 +88,7 @@ io.on("connection", (socket) => {
       io.to(users[socket.id].room).emit("startGame");
     })
   socket.on("gameStarted", () => {
+    if (interval) return;
     interval = setInterval(() => {
       game.move();
       socket.emit("respond", game.Grid.playground);
@@ -94,18 +97,11 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", ({username, room}) => {
     
     if (!username || !room) return ;
-    addUser(socket.id, room, username);
+    if (!addUser(socket.id, room, username, game.Grid.playground, game.lines, game.score)) return;
     socket.join(room);
     game.addData(room, username)
-
-      io.to(room).emit("joined", {
-        playground : game.Grid.playground,
-        lines: game.lines,
-        score: game.score,
-        username: game.username,
-        id: socket.id,
-      });
-
+    socket.emit("join");
+    io.to(room).emit("joined", rooms[room]);
   })
 
   socket.on("disconnect", () => {

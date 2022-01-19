@@ -42,7 +42,6 @@ const GameManager = class {
         {
             const arr = checkLineInGrid(newGrid);
             this.lines += arr.length;
-
             this.io.to(this.room).emit("collided", {
                 playground : this.Grid.playground,
                 lines: this.lines,

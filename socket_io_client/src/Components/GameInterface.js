@@ -39,13 +39,14 @@ export default function GameInterface({ io }) {
         // }
     }
     io.on("startGame", () => io.emit("gameStarted"))
+    
     const handleSubmit = (e) => {
-        console.log("joining");
         e.preventDefault()
-        console.log("joining");
         io.emit("joinRoom", {username: e.target.username.value, room: e.target.room.value})
-        setJoined(true);
     }
+    io.on("join", () => {
+        setJoined(true);
+    })
 
     const move = ({key}) =>
     {
@@ -64,7 +65,7 @@ export default function GameInterface({ io }) {
         }
         else if (key === "ArrowUp" || key === "w")
         {
-            io.emit("Rotate", {x: 30, y: { y1: 10, y2: 20}})
+            io.emit("rotate", {x: 30, y: { y1: 10, y2: 20}})
         }
         else if (key === "")
         {
