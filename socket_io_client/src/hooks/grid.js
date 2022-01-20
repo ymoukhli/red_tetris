@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback} from "react";
+import { useState, useEffect} from "react";
 import { dimenssion, generateGrid } from "../Utilitys/generateGrid";
 import { checkColision, checkLineInGrid } from "../Utilitys/utilitys";
 import { getRandomTetri } from "../Utilitys/tetrimino"
@@ -53,7 +53,7 @@ export const useGrid = (tetris, resetTetris, onLinesDestroy, updateLineScore, up
             }
             return newGrid;
         }
-    }, [tetris])
+    }, [tetris, onLinesDestroy])
     
     const setBackendGrid = (backendGrid) => {
         setGrid(backendGrid)
