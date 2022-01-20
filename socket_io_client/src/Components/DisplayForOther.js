@@ -1,37 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {StyledDisplayForOther} from "../Styles/StyledDisplayForOther"
+import { StyledMasterDisplay } from "../Styles/StyledMasterDisplay";
 import DisplayCard from "./DisplayCard";
 export default function DisplayForOther({io})
 {
     const [grids, setGrids] = useState({});
+    
+    useEffect(() => console.log("GRIDS", grids), [grids]);
 
-    io.on("joined", (data) => {
-        const tmp = {...grids}
-        for (let i = 0; i < data.length; i++)
-        {
-            const ele = data[i]
-            console.log('ele', ele);
-            if (ele.id === io.id) continue;
-            tmp[ele.id] = ele.playground;
-        }
-        setGrids(tmp);
-    })
-   
-    io.on("left", ({id}) => {
-        const tmp = {...grids}
-        const arr = tmp.filter((e) => e.id !== id);
-        setGrids(arr);
-    })
+    useEffect(() => {
+        io.on("joined", (data) => {
+            const tmp = {}
+            console.log("DATA", data, io.id);
+            for (let i = 0; i < data.length; i++)
+            {
+                const ele = data[i]
+                if (ele.id === io.id) continue;
+                console.log('ele', ele);
+                tmp[ele.id] = ele.playground;
+            }
+            setGrids(tmp)
+        })
 
-    io.on("collided", ({id, playground}) => {
-        if (id === io.id) return;
-        const tmp = {...grids};
-        if (tmp[id])
-        {
-            tmp[id] = playground;
+        io.on("left", ({id}) => {
+            const tmp = {...grids}
+            delete tmp[id];
             setGrids(tmp);
-        }
-    })
+        })
+        io.on("collided", ({id, playground}) => {
+            if (id === io.id) return;
+            setGrids({
+                ...grids,
+                [id]: playground
+            });
+        })
+    },[io])
 
     const display = Object.values(grids).map(grid => <DisplayCard grid={grid}></DisplayCard>)
     return (<StyledDisplayForOther>

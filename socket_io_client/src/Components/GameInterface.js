@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyledGameInterface , StyledGameInterfaceWrapper } from "../Styles/StyledGameInterface";
 import {useTetris} from "../hooks/tetris";
 import { useGrid } from "../hooks/grid"
@@ -19,15 +19,21 @@ export default function GameInterface({ io }) {
 
         io.emit("start");
     }
-    io.on("startGame", () => io.emit("gameStarted"))
-    
+
     const handleSubmit = (e) => {
         e.preventDefault()
         io.emit("joinRoom", {username: e.target.username.value, room: e.target.room.value})
     }
-    io.on("join", () => {
-        setJoined(true);
-    })
+    useEffect(() => {
+
+        io.on("join", () => {
+            setJoined(true);
+        })
+        io.on("respond", data => 
+        {
+            setBackendGrid(data);
+        });
+    }, [])
 
     const move = ({key}) =>
     {
@@ -53,22 +59,15 @@ export default function GameInterface({ io }) {
             io.emit("end");
         }
     }
-    io.on("respond", data => 
-    {
-        setBackendGrid(data);
-    });
 
     return (
     <StyledGameInterfaceWrapper onKeyDown={e => move(e)} tabIndex="-1">
         
-        {/* playground grid*/}
         {!joined && <JoinGame io={io} handleSubmit={handleSubmit}></JoinGame>}
 
-        {/* playground area */}
         {joined && <StyledGameInterface>
             <Nav io={io} reset={reset}></Nav>
             <MasterDisplay grid={grid}></MasterDisplay>
-            {/* <Playground grid={grid}></Playground> */}
             <DisplayForOther io={io}></DisplayForOther>
         </StyledGameInterface>}
         {/* {gameOver && <div>soso</div>} */}
