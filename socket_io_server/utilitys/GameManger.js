@@ -8,20 +8,23 @@ const GameManager = class {
     constructor(socket, io)
     {
         this.Player = undefined;
-        this.Grid = undefined
+        this.Grid = new Grid(12, 20)
         this.socket = socket;
         this.io = io;
         this.lines = 0;
         this.score = 0;
         this.room = "";
         this.username = "";
+        this.tetrArray = [];
+        this.tetrArrayIndexer = 0;
     }
 
-    addData = (room , username) => {
+    addData = (room , username, arr) => {
         this.room = room; 
         this.username = username
-        this.Player = this.newPlayer()
-        this.Grid = new Grid(12, 20);
+        this.Player = new Player(arr[0]);
+        this.tetrArray = arr;
+
     };
 
     updateGrid = () =>
@@ -60,7 +63,10 @@ const GameManager = class {
                 username: this.username,
                 id: this.socket.id
             })
-            this.Player = this.newPlayer();
+
+            this.tetrArrayIndexer += 1;
+            console.log("GAME MANAGER ::: TETRIMINOS ARRAY: ", this.tetrArray, this.tetrArray.length, this.tetrArrayIndexer);
+            this.Player = new Player(this.tetrArray[this.tetrArrayIndexer]);
         }
 
         // ---------- > delete line if any < --------//

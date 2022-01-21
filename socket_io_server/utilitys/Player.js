@@ -1,12 +1,15 @@
 const { rotateArr } = require("./utilitys");
+const { TETRIMINO } = require("./tetrimino");
 
 const Player = class {
-    constructor(x, y, shape)
+    constructor(letter)
     {
-        this.x = x;
-        this.y = y;
-        this.shape = shape
+        console.log(TETRIMINO[letter], letter,'--<');
+        this.x = 12 / 2;
+        this.y = 0;
+        this.shape = TETRIMINO[letter].shape;
         this.collided = false;
+
     }
     checkColision = (grid, xOffset, yOffset, shape = this.shape) => {
         for (let y = 0; y < shape.length; y++)

@@ -72,8 +72,7 @@ const RandomTetros = (nb) => {
     const tetriminos = "LITRCEKI"
     const tetroList = []
     for (let i = 0; i <= nb; i++){
-        const tetroList = (tetriminos[Math.floor(Math.random() * tetriminos.length)])
-        tetroList.push(tetroList)
+        tetroList.push((tetriminos[Math.floor(Math.random() * tetriminos.length)]))
     }
     return tetroList
 }

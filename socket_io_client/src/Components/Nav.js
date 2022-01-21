@@ -50,7 +50,6 @@ export default function Nav({io, reset}) {
                 return prev.filter(e => e.username !== username)
             });
         })
-
     }, [])
     
     const userInfo = room.map(x => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);

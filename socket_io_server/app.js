@@ -7,10 +7,9 @@ const port = process.env.PORT || 4001;
 const index = require("./routes/index");
 const { GameManager } = require("./utilitys/GameManger");
 const router = express.Router();
-const  {joinRoom} = require("./utilitys/utilitys");
-const { format } = require("path");
+const  {joinRoom, RandomTetros} = require("./utilitys/utilitys");
+
 const { clearInterval } = require("timers");
-const { truncate } = require("fs");
 const app = express();
 const rooms = {};
 const locked = {};
@@ -50,8 +49,9 @@ const addUser = (id, room, username, playground, lines, score) => {
     rooms[room] = [];
   }
   console.log("ADDING")
-  locked[room] = false;
-  rooms[room].push({id, username, playground, lines, score});
+  if (!locked[room])
+    locked[room] = {state: false, tetrArray: RandomTetros(8)};
+  rooms[room].push({id, username, playground, lines, score });
   users[id] = { room, username, playground, lines, score};
   console.log(users);
   return true;
@@ -65,13 +65,23 @@ const usersInRoom = (room) => rooms[room] ? rooms[room].length : 0;
 io.on("connection", (socket) => {
   console.log("New client connected");
   let interval;
+  let ioRoom;
   
   const game = new GameManager(socket, io);
 
   socket.on("move", (data) => {
     if (game.move(data.x,data.y))
     {
+      console.log(locked[ioRoom].tetrArray.length - game.tetrArrayIndexer);
+        if (locked[ioRoom].tetrArray.length - game.tetrArrayIndexer <= 8)
+        {
+          locked[ioRoom].tetrArray.push(...(RandomTetros(8)));
+          
+        }
+        game.tetrArray = locked[ioRoom].tetrArray;
+      
       socket.emit("respond", game.Grid.playground);
+       
     }
   })
 
@@ -83,10 +93,11 @@ io.on("connection", (socket) => {
   })
 
   socket.on("start", () => {
-    if (locked[users[socket.id]]) return ;
-      locked[users[socket.id].room] = true;
+    if (locked[users[socket.id]] || locked[users[socket.id].room].state === true) return ;
+      locked[users[socket.id].room].state = true;
       io.to(users[socket.id].room).emit("startGame");
-    })
+  })
+
   socket.on("gameStarted", () => {
     if (interval) return;
     interval = setInterval(() => {
@@ -99,8 +110,10 @@ io.on("connection", (socket) => {
     if (!username || !room) return ;
     if (!addUser(socket.id, room, username, game.Grid.playground, game.lines, game.score)) return;
     socket.join(room);
-    game.addData(room, username)
+    console.log("----->", locked, "||||" ,locked[room])
+    game.addData(room, username, locked[room].tetrArray);
     socket.emit("join");
+    ioRoom = room;
     io.to(room).emit("joined", rooms[room]);
   })
 
@@ -118,6 +131,7 @@ io.on("connection", (socket) => {
     removeUser(socket.id);
     clearInterval(interval);
   });
+
   socket.on("end", () => console.log("ended *********************"))
 });
 
