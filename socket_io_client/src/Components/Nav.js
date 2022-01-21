@@ -31,13 +31,24 @@ export default function Nav({io, reset}) {
             
         })
     
-        io.on("colision")
+        io.on("collided", ({username, score, lines}) => {
+            setRoom(prev => {
+                const tmp = [...prev];
+                const arr = tmp.find(e => e.username === username);
+                if (arr)
+                {
+                    arr.score = score;
+                    arr.lines = lines;
+                }
+                return tmp;
+            })
+        })
     
-        io.on("left", ({ username}) => {
-            console.log(`${username} left the room`);
-            if (!Boolean(room.find(e => e.username === username))) return ;
-            const arr = [...room];
-            setRoom(arr.filter(e => e.username !== username));
+        io.on("left", ({ username }) => {
+            setRoom(prev => {
+                console.log(prev);
+                return prev.filter(e => e.username !== username)
+            });
         })
 
     }, [])

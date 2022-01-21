@@ -42,21 +42,21 @@ const GameManager = class {
         {
             const arr = checkLineInGrid(newGrid);
             this.lines += arr.length;
-            this.io.to(this.room).emit("collided", {
-                playground : this.Grid.playground,
-                lines: this.lines,
-                score: this.score,
-                username: this.username,
-                id: this.socket.id
-            })
-
-
+            
+            
             for (let i = 0; i < arr.length; i++)
             {
                 this.score += i * 10 + arr.length * 3;
                 newGrid.splice(arr[i], 1);
                 newGrid.unshift(Array(newGrid[0].length).fill([0,'clear']))
             }
+            this.io.to(this.room).emit("collided", {
+                playground : newGrid,
+                lines: this.lines,
+                score: this.score,
+                username: this.username,
+                id: this.socket.id
+            })
             this.Player = this.newPlayer();
         }
 

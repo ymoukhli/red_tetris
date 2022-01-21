@@ -59,7 +59,7 @@ const TETRIMINO = {
 }
 
 const getRandomTetri = () => {
-    const tetriminos = 'LTRCEKI'
+    const tetriminos = 'ILTRCEKI'
     const randomVal = tetriminos[Math.floor(Math.random() * tetriminos.length)]
     return TETRIMINO[randomVal].shape;
 }

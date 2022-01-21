@@ -23,9 +23,11 @@ export default function DisplayForOther({io})
         })
 
         io.on("left", ({id}) => {
-            const tmp = {...grids}
-            delete tmp[id];
-            setGrids(tmp);
+            setGrids(prev => {
+                const tmp = {...prev}
+                delete tmp[id];
+                return tmp;
+            });
         })
         io.on("collided", ({id, playground}) => {
             if (id === io.id) return;
