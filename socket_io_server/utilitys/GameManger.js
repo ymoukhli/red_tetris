@@ -1,16 +1,14 @@
 const { Grid } = require("./Grid");
 const { Player } = require("./Player");
 const { getRandomTetri } = require("./tetrimino");
-const { checkLineInGrid } = require("./utilitys")
+const { checkLineInGrid, generateTetros } = require("./utilitys")
 const GameManager = class {
-    // ----------- shorthands -------- //
-    newPlayer = () => new Player(12 / 2, 0, getRandomTetri());
 
     // ---------- constructor ------- ///
     constructor(socket, io)
     {
-        this.Player = this.newPlayer();
-        this.Grid = new Grid(12, 20);
+        this.Player = undefined;
+        this.Grid = undefined
         this.socket = socket;
         this.io = io;
         this.lines = 0;
@@ -19,7 +17,12 @@ const GameManager = class {
         this.username = "";
     }
 
-    addData = (room , username) => {this.room = room; this.username = username};
+    addData = (room , username) => {
+        this.room = room; 
+        this.username = username
+        this.Player = this.newPlayer()
+        this.Grid = new Grid(12, 20);
+    };
 
     updateGrid = () =>
     {
