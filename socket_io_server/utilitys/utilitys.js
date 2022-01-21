@@ -1,5 +1,3 @@
-const { getRandomTetri } = require("./tetrimino");
-
 const rotateArr = (arr)=> {
     if (!arr)
         return ;
@@ -70,9 +68,14 @@ const joinRoom = (rooms, {room, username}, id) => {
     return 0;
 }
 
-const RandomTetrosKey = () => {
+const RandomTetros = (nb) => {
     const tetriminos = "LITRCEKI"
-    return (tetriminos[Math.floor(Math.random() * tetriminos.length)])
+    const tetroList = []
+    for (let i = 0; i <= nb; i++){
+        const tetroList = (tetriminos[Math.floor(Math.random() * tetriminos.length)])
+        tetroList.push(tetroList)
+    }
+    return tetroList
 }
 
-module.exports = { rotateArr, checkLineInGrid , joinRoom, RandomTetrosKey}
+module.exports = { rotateArr, checkLineInGrid , joinRoom, RandomTetros}
