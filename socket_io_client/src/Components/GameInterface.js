@@ -1,48 +1,44 @@
-import React, { useState, useEffect } from "react";
-import Display from "./Display";
-import Playground from "./Playground";
-import PlaygroundTest from "./PlaygroundTest";
-import Button from "./Button";
-import Score from "./Score";
-import { dimenssion, generateGrid } from "../Utilitys/generateGrid";
+import React, { useEffect, useState } from "react";
 import { StyledGameInterface , StyledGameInterfaceWrapper } from "../Styles/StyledGameInterface";
 import {useTetris} from "../hooks/tetris";
 import { useGrid } from "../hooks/grid"
-import {useLineScore} from "../hooks/lineScore"
-import { useScore } from "../hooks/score";
-import {checkColision , rotateArr} from "../Utilitys/utilitys";
 import JoinGame from "./JoinGame";
-import { StyledDisplay } from "../Styles/StyledDisplay";
-import { StyledDisplayCard } from "../Styles/StyledDisplayCard";
 import MasterDisplay from "../Components/MasterDisplay"
 import Nav from "../Components/Nav"
 import DisplayForOther from "./DisplayForOther";
 
 export default function GameInterface({ io }) {
 
-    const [tetris, updateTetrimino, resetTetris, rotateTetris] = useTetris();
+    const [tetris, resetTetris] = useTetris();
     const [grid, setBackendGrid] = useGrid(tetris, resetTetris);
-    const [lineScore] = useLineScore();
-    const [gameOver, setGameOver] = useState(false);
-    const [score, onLinesDestroy] = useScore();
+    // const [gameOver, setGameOver] = useState(false);
     const [joined, setJoined] = useState(false);
-    const [started, setStarted] = useState(false);
-    const [room, setRoom] = useState([]);
     
-    const [otherGrid, setOtherGrid] = useState([]);
 
     const reset = () => {
-        if (!started)
-        {
-            console.log(started)
-            setStarted(true)
-            io.emit("start");
-        }
+
+        io.emit("start");
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        io.emit("joinRoom", {username: e.target.username.value, room: e.target.room.value})
+    }
+    useEffect(() => {
+
+        io.on("join", () => {
+            setJoined(true);
+        })
+        io.on("respond", data => 
+        {
+            setBackendGrid(data);
+        });
+    }, [])
+
     const move = ({key}) =>
     {
         if (!joined) return ;
-        if (key ==="ArrowRight" || key == "d")
+        if (key ==="ArrowRight" || key === "d")
         {
             io.emit("move", {x: 1, y: 0});
         }
@@ -56,41 +52,25 @@ export default function GameInterface({ io }) {
         }
         else if (key === "ArrowUp" || key === "w")
         {
-            io.emit("Rotate", {x: 30, y: { y1: 10, y2: 20}})
+            io.emit("rotate", {x: 30, y: { y1: 10, y2: 20}})
         }
         else if (key === "")
         {
             io.emit("end");
         }
     }
-    io.on("joined", (room) => {
-        
-        setJoined(true);
-        setRoom(room)
-        console.log("joined")
-    })
-    io.on("respond", ans => 
-    {
-        setBackendGrid(ans.playground)
-    });
 
     return (
     <StyledGameInterfaceWrapper onKeyDown={e => move(e)} tabIndex="-1">
         
-        {/* playground grid*/}
-        {!joined && <JoinGame io={io}></JoinGame>}
+        {!joined && <JoinGame io={io} handleSubmit={handleSubmit}></JoinGame>}
 
-        {/* playground area */}
         {joined && <StyledGameInterface>
-            <Nav room={room} io={io}></Nav>
-            <MasterDisplay grid={grid} score={score} lineScore={lineScore} reset={reset}></MasterDisplay>
-            {/* <Playground grid={grid}></Playground> */}
-            {/* <Playground grid={grid}></Playground> */}
-            {/* <Playground grid={grid}></Playground>
-            <Playground grid={grid}></Playground> */}
-            {/* <DisplayForOther grid={grid}></DisplayForOther> */}
+            <Nav io={io} reset={reset}></Nav>
+            <MasterDisplay grid={grid}></MasterDisplay>
+            <DisplayForOther io={io}></DisplayForOther>
         </StyledGameInterface>}
-        {gameOver && <div>soso</div>}
+        {/* {gameOver && <div>soso</div>} */}
         {/* <div style="background-color: coral; padding: 5em; border:4px solid black;border-radius: 50%">GameOver</div>} */}
     </StyledGameInterfaceWrapper>
     )

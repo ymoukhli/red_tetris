@@ -5,7 +5,7 @@ export const StyledJoinGame = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: red;
+    background-color: #fafafa;
     font-weight: bold;
     border-radius: 10px;
     margin: 0 auto;

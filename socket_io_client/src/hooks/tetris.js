@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { dimenssion } from '../Utilitys/generateGrid';
 import { getRandomTetri, TETRIMINO } from '../Utilitys/tetrimino';
-import {rotateArr, checkColision} from '../Utilitys/utilitys'
 
 export const useTetris = () => {
     const [tetris, setTetris] = useState(

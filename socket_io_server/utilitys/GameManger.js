@@ -1,18 +1,31 @@
 const { Grid } = require("./Grid");
 const { Player } = require("./Player");
 const { getRandomTetri } = require("./tetrimino");
-const { checkLineInGrid } = require("./utilitys")
+const { checkLineInGrid, generateTetros } = require("./utilitys")
 const GameManager = class {
-    // ----------- shorthands -------- //
-    newPlayer = () => new Player(12 / 2, 0, getRandomTetri());
 
     // ---------- constructor ------- ///
-    constructor(socket)
+    constructor(socket, io)
     {
-        this.Player = this.newPlayer();
-        this.Grid = new Grid(12, 20);
+        this.Player = undefined;
+        this.Grid = new Grid(12, 20)
         this.socket = socket;
+        this.io = io;
+        this.lines = 0;
+        this.score = 0;
+        this.room = "";
+        this.username = "";
+        this.tetrArray = [];
+        this.tetrArrayIndexer = 0;
     }
+
+    addData = (room , username, arr) => {
+        this.room = room; 
+        this.username = username
+        this.Player = new Player(arr[0]);
+        this.tetrArray = arr;
+
+    };
 
     updateGrid = () =>
     {
@@ -34,12 +47,26 @@ const GameManager = class {
         if (this.Player.collided)
         {
             const arr = checkLineInGrid(newGrid);
+            this.lines += arr.length;
+            
+            
             for (let i = 0; i < arr.length; i++)
             {
+                this.score += i * 10 + arr.length * 3;
                 newGrid.splice(arr[i], 1);
                 newGrid.unshift(Array(newGrid[0].length).fill([0,'clear']))
             }
-            this.Player = this.newPlayer();
+            this.io.to(this.room).emit("collided", {
+                playground : newGrid,
+                lines: this.lines,
+                score: this.score,
+                username: this.username,
+                id: this.socket.id
+            })
+
+            this.tetrArrayIndexer += 1;
+            console.log("GAME MANAGER ::: TETRIMINOS ARRAY: ", this.tetrArray, this.tetrArray.length, this.tetrArrayIndexer);
+            this.Player = new Player(this.tetrArray[this.tetrArrayIndexer]);
         }
 
         // ---------- > delete line if any < --------//
@@ -66,12 +93,14 @@ const GameManager = class {
     }
 
     rotate = () => {
+
         if (this.Player.rotatePlayer(0,0,this.Grid))
         {
             this.Grid.playground = this.updateGrid();
             return true;
         }
         return false;
+        
     }
 }
 

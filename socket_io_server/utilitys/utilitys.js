@@ -52,6 +52,9 @@ const checkColision = (xOffset, yOffset,grid, tetris, arr = tetris.tetrimino) =>
     }
     return false;
 }
+
+
+
 const joinRoom = (rooms, {room, username}, id) => {
     if (!rooms.hasOwnProperty(room))
     {
@@ -64,4 +67,14 @@ const joinRoom = (rooms, {room, username}, id) => {
     rooms[room].push({ username , score: 0, lines: 0, id});
     return 0;
 }
-module.exports = { rotateArr, checkLineInGrid , joinRoom}
+
+const RandomTetros = (nb) => {
+    const tetriminos = "LITRCEKI"
+    const tetroList = []
+    for (let i = 0; i <= nb; i++){
+        tetroList.push((tetriminos[Math.floor(Math.random() * tetriminos.length)]))
+    }
+    return tetroList
+}
+
+module.exports = { rotateArr, checkLineInGrid , joinRoom, RandomTetros}

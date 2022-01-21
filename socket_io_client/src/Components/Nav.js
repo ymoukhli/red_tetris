@@ -1,27 +1,61 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import InfoCard from "./InfoCard";
 
-export default function Nav({room}, io) {
-    const StyledNav = styled.div`
-    position: fixed;
-    top: 0;
+const StyledNav = styled.div`
+position: fixed;
+top: 0;
+width: 100vw;
+display: flex;
+flex-direction: row;
+border-bottom: 3px solid black;
+`
 
-    width: 100vw;
-    display: flex;
-    flex-direction: row;
-    border-bottom: 3px solid black;
-    `
+const StyledStart = styled.button`
+    padding: 1em 3em;
+`
 
-    const StyledStart = styled.button`
-        padding: 1em 3em;
-    `
+export default function Nav({io, reset}) {
 
+    const [room, setRoom] = useState([]);
+
+    useEffect(() => {
+        io.on("joined", (users) => {
+    
+            const arr = [];
+            for (let user in users)
+            {
+                arr.push({username : users[user].username, score : users[user].score, lines: users[user].score});
+            }
+            setRoom(arr);
+            
+        })
+    
+        io.on("collided", ({username, score, lines}) => {
+            setRoom(prev => {
+                const tmp = [...prev];
+                const arr = tmp.find(e => e.username === username);
+                if (arr)
+                {
+                    arr.score = score;
+                    arr.lines = lines;
+                }
+                return tmp;
+            })
+        })
+    
+        io.on("left", ({ username }) => {
+            setRoom(prev => {
+                console.log(prev);
+                return prev.filter(e => e.username !== username)
+            });
+        })
+    }, [])
+    
     const userInfo = room.map(x => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
 
     return (<StyledNav>
-        <StyledStart>start</StyledStart>
+        <StyledStart onClick={reset}>start</StyledStart>
         {userInfo}
-
     </StyledNav>)
 } 

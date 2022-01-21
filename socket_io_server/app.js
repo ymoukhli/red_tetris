@@ -7,92 +7,132 @@ const port = process.env.PORT || 4001;
 const index = require("./routes/index");
 const { GameManager } = require("./utilitys/GameManger");
 const router = express.Router();
-const  {joinRoom} = require("./utilitys/utilitys");
-const { format } = require("path");
+const  {joinRoom, RandomTetros} = require("./utilitys/utilitys");
+
+const { clearInterval } = require("timers");
 const app = express();
-const users = {};
 const rooms = {};
+const locked = {};
+const users = {};
+
 app.use(index);
 
+const logAll = () => {
+
+  console.log(`********************************`)
+  console.log(`locked room :`,locked)
+  console.log(`rooms :`, rooms)
+  console.log(`users :`, users)
+  console.log(`*********||||||||||||||*********`)
+}
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors : {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET","POST"]
   }
 });
 
-
-const removeFromRoom = (id) =>
-{
-  for (const [key, value] of Object.entries(rooms))
+const removeUser = (id) => {
+  if (users[id])
   {
-    if (value.find(e => e.id === id))
-    {
-      rooms[key].splice(rooms[key].indexOf(rooms[key].find(e => e.id === id)), 1)
-      return key;
-    }
+    rooms[users[id].room] =  rooms[users[id].room].filter(e => e.id !== id);
+    delete locked[users[id].room];
+    delete users[id];
   }
 }
+
+const addUser = (id, room, username, playground, lines, score) => {
+  if (userExist(room, username)) return false;
+  if (!rooms[room])
+  {
+    rooms[room] = [];
+  }
+  console.log("ADDING")
+  if (!locked[room])
+    locked[room] = {state: false, tetrArray: RandomTetros(8)};
+  rooms[room].push({id, username, playground, lines, score });
+  users[id] = { room, username, playground, lines, score};
+  console.log(users);
+  return true;
+}
+const userExist = (room, username) => {
+  if (!rooms[room]) return false;
+  return Boolean(rooms[room].find(e => e.username === username));
+}
+const usersInRoom = (room) => rooms[room] ? rooms[room].length : 0;
+
 io.on("connection", (socket) => {
   console.log("New client connected");
-
   let interval;
+  let ioRoom;
   
-  const game = new GameManager(socket);
+  const game = new GameManager(socket, io);
 
   socket.on("move", (data) => {
-    
     if (game.move(data.x,data.y))
     {
-      socket.emit("respond", game.Grid);
+      console.log(locked[ioRoom].tetrArray.length - game.tetrArrayIndexer);
+        if (locked[ioRoom].tetrArray.length - game.tetrArrayIndexer <= 8)
+        {
+          locked[ioRoom].tetrArray.push(...(RandomTetros(8)));
+          
+        }
+        game.tetrArray = locked[ioRoom].tetrArray;
+      
+      socket.emit("respond", game.Grid.playground);
+       
     }
   })
 
-  socket.on("Rotate", (sok) => {
+  socket.on("rotate", (sok) => {
     if (game.rotate())
     {
-      socket.emit("respond", game.Grid);
+      socket.emit("respond", game.Grid.playground);
     }
   })
 
-  socket.on("start", (data) => {
+  socket.on("start", () => {
+    if (locked[users[socket.id]] || locked[users[socket.id].room].state === true) return ;
+      locked[users[socket.id].room].state = true;
+      io.to(users[socket.id].room).emit("startGame");
+  })
+
+  socket.on("gameStarted", () => {
+    if (interval) return;
     interval = setInterval(() => {
       game.move();
-      socket.emit("respond", game.Grid);
-    }, 1000)
+      socket.emit("respond", game.Grid.playground);
+    }, 1000);
   })
-
-  socket.on("joinRoom", data => {
-    // add checker
-    users[socket.socket_id]={username: data.username, room: data.room};
-    if (!joinRoom(rooms, data, socket.id) && rooms[data.room].length < 4)
-    {
-      socket.join(data.room);
-      io.to(data.room).emit("joined", rooms[data.room]);
-      console.log(`player joined room ${data.room}`)
-    }
+  socket.on("joinRoom", ({username, room}) => {
+    
+    if (!username || !room) return ;
+    if (!addUser(socket.id, room, username, game.Grid.playground, game.lines, game.score)) return;
+    socket.join(room);
+    console.log("----->", locked, "||||" ,locked[room])
+    game.addData(room, username, locked[room].tetrArray);
+    socket.emit("join");
+    ioRoom = room;
+    io.to(room).emit("joined", rooms[room]);
   })
 
   socket.on("disconnect", () => {
-    console.log('user disconect -->', io.sockets.adapter.rooms);
-    for (let i = 0; i <  socket.adapter.rooms.length; i++) {
-      const element =  socket.adapter.rooms[i];
-      console.log('->', element);
-    }
-    if (interval)
-      clearInterval(interval);
-      
-      const room = removeFromRoom(socket.id);
-      io.to(room).emit("joined", rooms[room]);
+    // disconnect
+    if (!users[socket.id]) return ;
+    io.to(users[socket.id].room).emit("left", {
+      lines: game.lines,
+      score: game.score,
+      username: game.username,
+      id: socket.id
+    });
+    logAll();
+    socket.leave(users[socket.id].room);
+    removeUser(socket.id);
+    clearInterval(interval);
   });
-  
-  socket.on("end", () => {
-    if (interval)
-      clearInterval(interval);
-    const room = removeFromRoom(socket.id);
-    io.to(room).emit("joined", rooms[room]);
-    })
+
+  socket.on("end", () => console.log("ended *********************"))
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
