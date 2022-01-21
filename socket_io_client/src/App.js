@@ -3,7 +3,7 @@ import io from "socket.io-client";
 
 import GameInterface from './Components/GameInterface'
 
-const ENDPOINT = "http://10.11.3.14:4001";
+const ENDPOINT = "http://127.0.0.1:4001";
 const socket = io(ENDPOINT);
 
 socket.on("startGame", () => {
