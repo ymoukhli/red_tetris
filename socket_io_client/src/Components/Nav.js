@@ -3,7 +3,6 @@ import styled from "styled-components";
 import InfoCard from "./InfoCard";
 
 const StyledNav = styled.div`
-position: fixed;
 top: 0;
 width: 100vw;
 display: flex;

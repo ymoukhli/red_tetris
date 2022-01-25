@@ -37,7 +37,8 @@ const removeUser = (id) => {
   if (users[id])
   {
     rooms[users[id].room] =  rooms[users[id].room].filter(e => e.id !== id);
-    delete locked[users[id].room];
+    if (rooms[users[id].room].length === 0)
+      delete locked[users[id].room];
     delete users[id];
   }
 }
@@ -72,13 +73,12 @@ io.on("connection", (socket) => {
   socket.on("move", (data) => {
     if (game.move(data.x,data.y))
     {
-      console.log(locked[ioRoom].tetrArray.length - game.tetrArrayIndexer);
-        if (locked[ioRoom].tetrArray.length - game.tetrArrayIndexer <= 8)
-        {
-          locked[ioRoom].tetrArray.push(...(RandomTetros(8)));
-          
-        }
-        game.tetrArray = locked[ioRoom].tetrArray;
+      // console.log(locked[ioRoom].tetrArray.length - game.tetrArrayIndexer);
+      if (locked[ioRoom].tetrArray.length - game.tetrArrayIndexer <= 8)
+      {
+        locked[ioRoom].tetrArray.push(...(RandomTetros(8)));
+      }
+      game.tetrArray = locked[ioRoom].tetrArray;
       
       socket.emit("respond", game.Grid.playground);
        
@@ -94,8 +94,8 @@ io.on("connection", (socket) => {
 
   socket.on("start", () => {
     if (locked[users[socket.id]] || locked[users[socket.id].room].state === true) return ;
-      locked[users[socket.id].room].state = true;
-      io.to(users[socket.id].room).emit("startGame");
+    locked[users[socket.id].room].state = true;
+    io.to(users[socket.id].room).emit("startGame");
   })
 
   socket.on("gameStarted", () => {
@@ -110,7 +110,6 @@ io.on("connection", (socket) => {
     if (!username || !room) return ;
     if (!addUser(socket.id, room, username, game.Grid.playground, game.lines, game.score)) return;
     socket.join(room);
-    console.log("----->", locked, "||||" ,locked[room])
     game.addData(room, username, locked[room].tetrArray);
     socket.emit("join");
     ioRoom = room;

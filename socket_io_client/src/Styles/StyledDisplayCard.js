@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 
 export const StyledDisplayCard = styled.div`
-    background-color: #333;
+    // background-color: #333;
     display: grid;
     grid-template-areas:
                 "a a"

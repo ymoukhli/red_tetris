@@ -6,7 +6,15 @@ import JoinGame from "./JoinGame";
 import MasterDisplay from "../Components/MasterDisplay"
 import Nav from "../Components/Nav"
 import DisplayForOther from "./DisplayForOther";
+import styled from "styled-components";
 
+
+const StyledWrapper = styled.div`
+    // background-color: blue;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+`;
 export default function GameInterface({ io }) {
 
     const [tetris, resetTetris] = useTetris();
@@ -67,8 +75,11 @@ export default function GameInterface({ io }) {
 
         {joined && <StyledGameInterface>
             <Nav io={io} reset={reset}></Nav>
+            <StyledWrapper>
+
             <MasterDisplay grid={grid}></MasterDisplay>
             <DisplayForOther io={io}></DisplayForOther>
+            </StyledWrapper>
         </StyledGameInterface>}
         {/* {gameOver && <div>soso</div>} */}
         {/* <div style="background-color: coral; padding: 5em; border:4px solid black;border-radius: 50%">GameOver</div>} */}
