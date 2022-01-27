@@ -21,7 +21,7 @@ export default function GameInterface({ io }) {
     const [grid, setBackendGrid] = useGrid(tetris, resetTetris);
     // const [gameOver, setGameOver] = useState(false);
     const [joined, setJoined] = useState(false);
-    
+    const [multiPlayers, SetMultiPlayers] = useState(false);
 
     const reset = () => {
 
@@ -36,6 +36,14 @@ export default function GameInterface({ io }) {
 
         io.on("join", () => {
             setJoined(true);
+        })
+        io.on("multy", () => {
+            console.log("setting multy")
+            SetMultiPlayers(true);
+        })
+        io.on("noMulty", () => {
+            console.log("setting no multy")
+            SetMultiPlayers(false);
         })
         io.on("respond", data => 
         {
@@ -67,19 +75,22 @@ export default function GameInterface({ io }) {
             io.emit("end");
         }
     }
-
+    console.log(multiPlayers)
     return (
     <StyledGameInterfaceWrapper onKeyDown={e => move(e)} tabIndex="-1">
         
         {!joined && <JoinGame io={io} handleSubmit={handleSubmit}></JoinGame>}
 
         {joined && <StyledGameInterface>
+            <React.StrictMode>
+
             <Nav io={io} reset={reset}></Nav>
             <StyledWrapper>
-
-            <MasterDisplay grid={grid}></MasterDisplay>
-            <DisplayForOther io={io}></DisplayForOther>
+                <MasterDisplay grid={grid}></MasterDisplay>
+                {/* display only whene someone joined */}
+                <DisplayForOther multiPlayers={multiPlayers} io={io}></DisplayForOther>
             </StyledWrapper>
+            </React.StrictMode>
         </StyledGameInterface>}
         {/* {gameOver && <div>soso</div>} */}
         {/* <div style="background-color: coral; padding: 5em; border:4px solid black;border-radius: 50%">GameOver</div>} */}

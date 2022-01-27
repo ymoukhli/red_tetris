@@ -51,7 +51,7 @@ export default function Nav({io, reset}) {
         })
     }, [])
     
-    const userInfo = room.map(x => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
+    const userInfo = room.map((x, i) => <InfoCard key={i} username={x.username} score={x.score} lines={x.lines}></InfoCard>);
 
     return (<StyledNav>
         <StyledStart onClick={reset}>start</StyledStart>

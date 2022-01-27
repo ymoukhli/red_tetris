@@ -33,12 +33,17 @@ const io = socketIo(server, {
   }
 });
 
-const removeUser = (id) => {
+const removeUser = (id, socket) => {
   if (users[id])
   {
-    rooms[users[id].room] =  rooms[users[id].room].filter(e => e.id !== id);
-    if (rooms[users[id].room].length === 0)
-      delete locked[users[id].room];
+    const room = users[id].room;
+    rooms[room] =  rooms[room].filter(e => e.id !== id);
+    if (rooms[room].length === 0)
+      delete locked[room];
+    else if (rooms[room].length === 1)
+    {
+      io.to(room).emit("noMulty");
+    }
     delete users[id];
   }
 }
@@ -108,11 +113,15 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", ({username, room}) => {
     
     if (!username || !room) return ;
-    if (!addUser(socket.id, room, username, game.Grid.playground, game.lines, game.score)) return;
+    if (!addUser(socket.id, room, username, game.Grid.playground, game.lines, game.score, socket)) return;
     socket.join(room);
     game.addData(room, username, locked[room].tetrArray);
     socket.emit("join");
     ioRoom = room;
+    if (rooms[room].length >= 2)
+    {
+      io.to(room).emit("multy");
+    }
     io.to(room).emit("joined", rooms[room]);
   })
 
@@ -127,7 +136,7 @@ io.on("connection", (socket) => {
     });
     logAll();
     socket.leave(users[socket.id].room);
-    removeUser(socket.id);
+    removeUser(socket.id, socket);
     clearInterval(interval);
   });
 
