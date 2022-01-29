@@ -1,8 +1,13 @@
 import React from "react";
 import Playground from "./Playground";
+import styled from "styled-components";
 
-import { StyledMasterDisplay } from "../Styles/StyledMasterDisplay"
-
+const StyledMasterDisplay = styled.div`
+    // justify-self: center;
+    background-color: blue;
+    // margin: 0 auto;
+    min-width: 50vw;
+`
 export default function MasterDisplay({grid})
 {
     return (

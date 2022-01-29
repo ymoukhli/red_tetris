@@ -19,7 +19,6 @@ export default function GameInterface({ io }) {
 
     const [tetris, resetTetris] = useTetris();
     const [grid, setBackendGrid] = useGrid(tetris, resetTetris);
-    // const [gameOver, setGameOver] = useState(false);
     const [joined, setJoined] = useState(false);
     const [multiPlayers, SetMultiPlayers] = useState(false);
 

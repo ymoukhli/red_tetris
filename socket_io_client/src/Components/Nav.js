@@ -19,6 +19,7 @@ export default function Nav({io, reset}) {
     const [room, setRoom] = useState([]);
 
     useEffect(() => {
+        console.log("EFFECT NAV")
         io.on("joined", (users) => {
     
             const arr = [];

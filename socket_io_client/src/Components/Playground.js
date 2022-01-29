@@ -1,8 +1,18 @@
 import React from "react";
-import { StyledPlayground } from "../Styles/StyledPlayground";
 import { dimenssion } from "../Utilitys/generateGrid";
 import Cell from "./Cell";
+import styled from "styled-components";
 
+// position: absolute;
+export const StyledPlayground = styled.div`
+
+    width: 300px;
+    height: 500px;
+    display: grid;
+    margin: 0 auto;
+    grid-template-rows: repeat(${props => props.height}, 25px);
+    grid-template-columns: repeat(${props => props.width}, 25px);
+`
 
 export default function Playground({grid})
 {

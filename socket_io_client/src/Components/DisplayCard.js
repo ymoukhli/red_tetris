@@ -1,8 +1,9 @@
 import Playground from "./Playground";
+import PlaygroundTest from "./PlaygroundTest";
 
 
 export default function DisplayCard({grid}) {
     return (
-        <Playground grid={grid}></Playground>
+        <PlaygroundTest grid={grid}></PlaygroundTest>
     )
 }
