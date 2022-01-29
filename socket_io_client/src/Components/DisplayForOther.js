@@ -17,9 +17,6 @@ export default function DisplayForOther({io,multiPlayers})
 {
     const [grids, setGrids] = useState({});
     
-    useEffect(() => console.log("GRIDS", grids, multiPlayers), [grids]);
-
-    
     useEffect(() => {
 
         console.log("first render")

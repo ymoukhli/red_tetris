@@ -10,7 +10,6 @@ import styled from "styled-components";
 
 
 const StyledWrapper = styled.div`
-    // background-color: blue;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -48,7 +47,7 @@ export default function GameInterface({ io }) {
         {
             setBackendGrid(data);
         });
-    }, [])
+    }, [io, setBackendGrid])
 
     const move = ({key}) =>
     {
