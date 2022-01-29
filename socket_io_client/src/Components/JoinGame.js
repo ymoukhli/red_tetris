@@ -2,9 +2,8 @@ import React from "react";
 import { StyledJoinGame } from "../Styles/StyledJoinGame";
 import Button from "./Button";
 
-export default function JoinGame({io, handleSubmit}) {
+export default function JoinGame({handleSubmit}) {
    
-
     return (<StyledJoinGame>
         <form onSubmit={handleSubmit}>
 

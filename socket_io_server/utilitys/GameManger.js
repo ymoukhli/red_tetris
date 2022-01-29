@@ -5,29 +5,19 @@ const { checkLineInGrid, generateTetros } = require("./utilitys")
 const GameManager = class {
 
     // ---------- constructor ------- ///
-    constructor(socket, io)
+    constructor(username, room, arr, user_id)
     {
-        this.Player = undefined;
+        this.id = user_id
         this.Grid = new Grid(12, 20)
-        this.socket = socket;
-        this.io = io;
         this.lines = 0;
         this.score = 0;
-        this.room = "";
-        this.username = "";
-        this.tetrArray = [];
+        this.room = room;
+        this.username = username;
+        this.Player = new Player(arr[0]);
         this.tetrArrayIndexer = 0;
     }
 
-    addData = (room , username, arr) => {
-        this.room = room; 
-        this.username = username
-        this.Player = new Player(arr[0]);
-        this.tetrArray = arr;
-
-    };
-
-    updateGrid = () =>
+    updateGrid = (tetrArray) =>
     {
         console.log("updating Grid in Grid class");
         // ----- > reset grid < ---------
@@ -56,17 +46,19 @@ const GameManager = class {
                 newGrid.splice(arr[i], 1);
                 newGrid.unshift(Array(newGrid[0].length).fill([0,'clear']))
             }
-            this.io.to(this.room).emit("collided", {
+
+            this.score += 1
+            io.to(this.room).emit("collided", {
                 playground : newGrid,
                 lines: this.lines,
                 score: this.score,
                 username: this.username,
-                id: this.socket.id
+                user_id: this.id
             })
 
             this.tetrArrayIndexer += 1;
-            console.log("GAME MANAGER ::: TETRIMINOS ARRAY: ", this.tetrArray, this.tetrArray.length, this.tetrArrayIndexer);
-            this.Player = new Player(this.tetrArray[this.tetrArrayIndexer]);
+            console.log("GAME MANAGER ::: TETRIMINOS ARRAY: ", tetrArray, tetrArray.length, this.tetrArrayIndexer);
+            this.Player = new Player(tetrArray[this.tetrArrayIndexer]);
         }
 
         // ---------- > delete line if any < --------//
@@ -76,27 +68,28 @@ const GameManager = class {
 
     // for setinterval move() :)
 
-    move = (x = 0, y = 1) => {
+    move = (x = 0, y = 1, room = null, tetrArray = []) => {
+        console.log('from room', room);
         if (this.Player.updatePlayerPos(x, y, this.Grid))
         {
-            this.Grid.playground = this.updateGrid();
+            this.Grid.playground = this.updateGrid(tetrArray);
             return true;
         }
         else if (y === 1)
         {
             this.Player.collided = true;
-            this.Grid.playground = this.updateGrid();
+            this.Grid.playground = this.updateGrid(tetrArray);
             return true;
         }
         return false;
         // =========================> <========================= //
     }
 
-    rotate = () => {
+    rotate = (tetrArray) => {
 
         if (this.Player.rotatePlayer(0,0,this.Grid))
         {
-            this.Grid.playground = this.updateGrid();
+            this.Grid.playground = this.updateGrid(tetrArray);
             return true;
         }
         return false;
