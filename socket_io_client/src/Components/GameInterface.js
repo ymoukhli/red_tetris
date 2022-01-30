@@ -11,7 +11,8 @@ import styled from "styled-components";
 
 const StyledWrapper = styled.div`
     display: flex;
-    justify-content: space-around;
+    background-color: green;
+    justify-content: center;
     align-items: center;
 `;
 export default function GameInterface({ io }) {
@@ -30,11 +31,14 @@ export default function GameInterface({ io }) {
         e.preventDefault()
         io.emit("joinRoom", {username: e.target.username.value, room: e.target.room.value})
     }
+
+    const joinCallback = () => {
+        setJoined(true);
+    }
     useEffect(() => {
 
-        io.on("join", () => {
-            setJoined(true);
-        })
+        io.on("join",joinCallback)
+
         io.on("multy", () => {
             console.log("setting multy")
             SetMultiPlayers(true);
@@ -47,6 +51,10 @@ export default function GameInterface({ io }) {
         {
             setBackendGrid(data);
         });
+
+        return (() => {
+            io.off("join", joinCallback);
+        })
     }, [io, setBackendGrid])
 
     const move = ({key}) =>
@@ -84,7 +92,7 @@ export default function GameInterface({ io }) {
 
             <Nav io={io} reset={reset}></Nav>
             <StyledWrapper>
-                <MasterDisplay grid={grid}></MasterDisplay>
+                <MasterDisplay grid={grid} io={io}></MasterDisplay>
                 {/* display only whene someone joined */}
                 <DisplayForOther multiPlayers={multiPlayers} io={io}></DisplayForOther>
             </StyledWrapper>

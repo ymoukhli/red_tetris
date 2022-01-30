@@ -10,6 +10,7 @@ const router = express.Router();
 const  {joinRoom, RandomTetros} = require("./utilitys/utilitys");
 
 const { clearInterval } = require("timers");
+const { access } = require("fs");
 const app = express();
 const rooms = {};
 const locked = {};
@@ -55,8 +56,11 @@ const addUser = (id, room, username, playground, lines, score) => {
     rooms[room] = [];
   }
   console.log("ADDING")
-  if (!locked[room])
+  console.log("adding user || ", locked[room]);
+  if (!locked[room] || locked[room].tetrArray.length === 0)
     locked[room] = {state: false, tetrArray: RandomTetros(8)};
+
+  console.log("adding user || ", locked[room]);
   rooms[room].push({id, username, playground, lines, score });
   users[id] = { room, username, playground, lines, score};
   console.log(users);
@@ -72,19 +76,20 @@ io.on("connection", (socket) => {
   console.log("New client connected");
   let interval;
   let ioRoom;
-  
   const game = new GameManager(socket, io);
 
+  const queueTetriminos = () => {
+    if (locked[ioRoom].tetrArray.length - game.tetrArrayIndexer <= 8)
+        locked[ioRoom].tetrArray.push(...(RandomTetros(8)));
+      if (game.tetrArray.length - game.tetrArrayIndexer <= 8)
+        game.tetrArray = [...locked[ioRoom].tetrArray];
+  }
   socket.on("move", (data) => {
+    
     if (game.move(data.x,data.y))
     {
-      // console.log(locked[ioRoom].tetrArray.length - game.tetrArrayIndexer);
-      if (locked[ioRoom].tetrArray.length - game.tetrArrayIndexer <= 8)
-      {
-        locked[ioRoom].tetrArray.push(...(RandomTetros(8)));
-      }
-      game.tetrArray = locked[ioRoom].tetrArray;
-      
+      console.log("--@>",locked[ioRoom].tetrArray.length - game.tetrArrayIndexer);
+      queueTetriminos();
       socket.emit("respond", game.Grid.playground);
        
     }
@@ -105,8 +110,10 @@ io.on("connection", (socket) => {
 
   socket.on("gameStarted", () => {
     if (interval) return;
+    io.to(ioRoom).emit("display", game.tetrArray.slice(game.tetrArrayIndexer + 1))
     interval = setInterval(() => {
       game.move();
+      queueTetriminos();
       socket.emit("respond", game.Grid.playground);
     }, 1000);
   })
@@ -134,7 +141,6 @@ io.on("connection", (socket) => {
       username: game.username,
       id: socket.id
     });
-    logAll();
     socket.leave(users[socket.id].room);
     removeUser(socket.id, socket);
     clearInterval(interval);

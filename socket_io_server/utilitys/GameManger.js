@@ -23,7 +23,7 @@ const GameManager = class {
         this.room = room; 
         this.username = username
         this.Player = new Player(arr[0]);
-        this.tetrArray = arr;
+        this.tetrArray = [...arr];
 
     };
 
@@ -56,6 +56,7 @@ const GameManager = class {
                 newGrid.splice(arr[i], 1);
                 newGrid.unshift(Array(newGrid[0].length).fill([0,'clear']))
             }
+
             this.io.to(this.room).emit("collided", {
                 playground : newGrid,
                 lines: this.lines,
@@ -64,12 +65,16 @@ const GameManager = class {
                 id: this.socket.id
             })
 
-            this.tetrArrayIndexer += 1;
-            console.log("GAME MANAGER ::: TETRIMINOS ARRAY: ", this.tetrArray, this.tetrArray.length, this.tetrArrayIndexer);
+            if (this.tetrArrayIndexer >= this.tetrArray.length)
+            {
+                console.warn("index exced array");
+            }
+            else {
+                this.tetrArrayIndexer += 1;
+            }
+            this.socket.emit("display", this.tetrArray.slice(this.tetrArrayIndexer + 1));
             this.Player = new Player(this.tetrArray[this.tetrArrayIndexer]);
         }
-
-        // ---------- > delete line if any < --------//
 
         return newGrid;
     }

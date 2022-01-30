@@ -5,6 +5,7 @@ import styled from "styled-components";
 const StyledDisplayForOther = styled.div`
     background-color: red;
     width: 100%;
+    max-width: 50vw;
     display: grid;
     justify-content: space-around;
     gap: 10px;

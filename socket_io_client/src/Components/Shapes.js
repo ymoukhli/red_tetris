@@ -38,17 +38,17 @@ export const L = () => {
     return (<Styled32 width={width}>
         <StyledDisplayCube key="L1"></StyledDisplayCube>
         <StyledDisplayCube key="L2"></StyledDisplayCube>
-        <StyledEmptyCube key="L1"></StyledEmptyCube>
-        <StyledEmptyCube key="L2"></StyledEmptyCube>
+        <StyledEmptyCube key="Le1"></StyledEmptyCube>
+        <StyledEmptyCube key="Le2"></StyledEmptyCube>
         <StyledDisplayCube key="L3"></StyledDisplayCube>
         <StyledDisplayCube key="L4"></StyledDisplayCube>
     </Styled32>)
 }
 export const T = () => {
     return (<Styled32 width={width}>
-        <StyledEmptyCube key="T1"></StyledEmptyCube>
+        <StyledEmptyCube key="Te1"></StyledEmptyCube>
         <StyledDisplayCube key="T1"></StyledDisplayCube>
-        <StyledEmptyCube key="T2"></StyledEmptyCube>
+        <StyledEmptyCube key="Te2"></StyledEmptyCube>
         <StyledDisplayCube key="T2"></StyledDisplayCube>
         <StyledDisplayCube key="T3"></StyledDisplayCube>
         <StyledDisplayCube key="T4"></StyledDisplayCube>
@@ -56,12 +56,12 @@ export const T = () => {
 }
 export const R = () => {
     return (<Styled32 width={width}>
-        <StyledEmptyCube key="R1"></StyledEmptyCube>
+        <StyledEmptyCube key="Re1"></StyledEmptyCube>
         <StyledDisplayCube key="R1"></StyledDisplayCube>
         <StyledDisplayCube key="R2"></StyledDisplayCube>
         <StyledDisplayCube key="R3"></StyledDisplayCube>
         <StyledDisplayCube key="R4"></StyledDisplayCube>
-        <StyledEmptyCube key="R2"></StyledEmptyCube>
+        <StyledEmptyCube key="Re2"></StyledEmptyCube>
     </Styled32>)
 }
 export const C = () => {
@@ -76,9 +76,9 @@ export const E = () => {
     return (<Styled23 width={width}>
         <StyledDisplayCube key="E1"></StyledDisplayCube>
         <StyledDisplayCube key="E2"></StyledDisplayCube>
-        <StyledEmptyCube key="E1"></StyledEmptyCube>
+        <StyledEmptyCube key="Ee1"></StyledEmptyCube>
         <StyledDisplayCube key="E3"></StyledDisplayCube>
-        <StyledEmptyCube key="E2"></StyledEmptyCube>
+        <StyledEmptyCube key="Ee2"></StyledEmptyCube>
         <StyledDisplayCube key="E4"></StyledDisplayCube>
     </Styled23>)
 }
@@ -86,10 +86,10 @@ export const K = () => {
     return (<Styled23 width={width}>
         <StyledDisplayCube key="K1"></StyledDisplayCube>
         <StyledDisplayCube key="K2"></StyledDisplayCube>
-        <StyledEmptyCube key="Ke1"></StyledEmptyCube>
         <StyledDisplayCube key="K3"></StyledDisplayCube>
-        <StyledEmptyCube key="Ke2"></StyledEmptyCube>
+        <StyledEmptyCube key="Ke1"></StyledEmptyCube>
         <StyledDisplayCube key="K4"></StyledDisplayCube>
+        <StyledEmptyCube key="Ke2"></StyledEmptyCube>
     </Styled23>)
 }
 

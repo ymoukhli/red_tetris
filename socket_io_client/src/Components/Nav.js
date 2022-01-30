@@ -18,37 +18,45 @@ export default function Nav({io, reset}) {
 
     const [room, setRoom] = useState([]);
 
+    const collided = ({username, score, lines}) => {
+        setRoom(prev => {
+            const tmp = [...prev];
+            const arr = tmp.find(e => e.username === username);
+            if (arr)
+            {
+                arr.score = score;
+                arr.lines = lines;
+            }
+            return tmp;
+        })
+    }
+    const left = ({ username }) => {
+        setRoom(prev => {
+            console.log(prev);
+            return prev.filter(e => e.username !== username)
+        });
+    }
+    const joined = (users) => {
+        const arr = [];
+        for (let user in users)
+        {
+            arr.push({username : users[user].username, score : users[user].score, lines: users[user].score});
+        }
+        setRoom(arr);
+        
+    }
     useEffect(() => {
         console.log("EFFECT NAV")
-        io.on("joined", (users) => {
+        io.on("joined", joined)
     
-            const arr = [];
-            for (let user in users)
-            {
-                arr.push({username : users[user].username, score : users[user].score, lines: users[user].score});
-            }
-            setRoom(arr);
-            
-        })
+        io.on("collided", collided)
     
-        io.on("collided", ({username, score, lines}) => {
-            setRoom(prev => {
-                const tmp = [...prev];
-                const arr = tmp.find(e => e.username === username);
-                if (arr)
-                {
-                    arr.score = score;
-                    arr.lines = lines;
-                }
-                return tmp;
-            })
-        })
-    
-        io.on("left", ({ username }) => {
-            setRoom(prev => {
-                console.log(prev);
-                return prev.filter(e => e.username !== username)
-            });
+        io.on("left", left)
+
+        return (() => {
+            io.off("joined", joined)
+            io.off("collided", collided)
+            io.off("left", left)  
         })
     }, [io])
     

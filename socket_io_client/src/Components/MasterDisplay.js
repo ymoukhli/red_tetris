@@ -9,12 +9,12 @@ const StyledMasterDisplay = styled.div`
     width: 50vw;
     min-width: 400px;
 `
-export default function MasterDisplay({grid})
+export default function MasterDisplay({grid, io})
 {
     return (
     <StyledMasterDisplay>
         <Playground grid={grid}></Playground>
-        <Display></Display>
+        <Display io={io}></Display>
     </StyledMasterDisplay>
     )
 }         
