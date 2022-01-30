@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { StyledGameInterface, StyledGameInterfaceWrapper } from "../Styles/StyledGameInterface";
 import { useTetris } from "../hooks/tetris";
 import { useGrid } from "../hooks/grid";
 import JoinGame from "./JoinGame";
@@ -9,6 +8,21 @@ import DisplayForOther from "./DisplayForOther";
 import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import Container from "@mui/material/Container";
+import { styled } from "@mui/material/styles";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+
+const Item = styled(Paper)(({ theme }) => ({
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 
 export default function GameInterface({}) {
   const [tetris, resetTetris] = useTetris();
@@ -61,25 +75,38 @@ export default function GameInterface({}) {
       sockets.emit("move", { x: 0, y: 1 });
     } else if (key === "ArrowUp" || key === "w") {
       sockets.emit("rotate");
-    } 
+    }
     // else if (key === "") {
     //   sockets.emit("end");
     // }
   };
 
   return (
-    <StyledGameInterfaceWrapper onKeyDown={(e) => move(e)} tabIndex="-1">
-      {!joined && <JoinGame handleSubmit={handleSubmit}></JoinGame>}
+    <React.Fragment>
+      <Container>
+        {!joined && <JoinGame handleSubmit={handleSubmit}></JoinGame>}
 
-      {joined && (
-        <StyledGameInterface>
-          <Nav io={sockets}></Nav>
-          <MasterDisplay grid={grid}></MasterDisplay>
-          <DisplayForOther io={sockets} user_id={user_id}></DisplayForOther>
-        </StyledGameInterface>
-      )}
-      {/* {gameOver && <div>soso</div>} */}
-      {/* <div style="background-color: coral; padding: 5em; border:4px solid black;border-radius: 50%">GameOver</div>} */}
-    </StyledGameInterfaceWrapper>
+        {joined && (
+          <Box onKeyDown={(e) => move(e)} tabIndex="-1">
+            <Nav io={sockets}></Nav>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems="center"
+              spacing={{ xs: 1, sm: 2, md: 4 }}
+              divider={<Divider orientation="vertical" flexItem />}
+            >
+              <Item>
+                <MasterDisplay grid={grid}></MasterDisplay>
+              </Item>
+              <DisplayForOther io={sockets} user_id={user_id}></DisplayForOther>
+            </Stack>
+          </Box>
+        )}
+        {/* {gameOver && <div>soso</div>} */}
+        {/* <div style="background-color: coral; padding: 5em; border:4px solid black;border-radius: 50%">GameOver</div>} */}
+        {/* </StyledGameInterfaceWrapper> */}
+      </Container>
+    </React.Fragment>
   );
 }

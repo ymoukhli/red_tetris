@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import InfoCard from "./InfoCard";
-
-const StyledNav = styled.div`
-  position: fixed;
-  top: 0;
-  width: 100vw;
-  display: flex;
-  flex-direction: row;
-  border-bottom: 3px solid black;
-`;
-
-const StyledStart = styled.button`
-  padding: 1em 3em;
-`;
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 
 export default function Nav({ io }) {
   const [room, setRoom] = useState({});
@@ -45,27 +36,41 @@ export default function Nav({ io }) {
         const tmp = { ...prev };
         tmp[user_id].score = score;
         tmp[user_id].lines = lines;
-        return tmp
+        return tmp;
       });
     });
 
     io.on("left", ({ userID }) => {
       setRoom((prev) => {
         const tmp = { ...prev };
-        delete tmp[userID]
-        return tmp
+        delete tmp[userID];
+        return tmp;
       });
     });
   }, []);
 
-  const userInfo = Object.values(room).map((x) => (
-    <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>
-  ));
+  const userInfo = Object.values(room).map((x) => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
 
   return (
-    <StyledNav>
-      <StyledStart onClick={reset}>start</StyledStart>
-      {userInfo}
-    </StyledNav>
+    <AppBar position="fixed" color="primary" sx={{ top: 0, bottom: "auto" }}>
+      <Toolbar>
+        <Typography variant="h5" gutterBottom component="div" sx={{ p: 2, pb: 0 }}>
+          Red tetris
+        </Typography>
+        <Box sx={{ flexGrow: 1 }} />
+        {userInfo}
+        <Box sx={{ flexGrow: 1 }} />
+        <Button color="inherit" variant="contained">
+          <span style={{ color: "black", fontWeight: "bold" }} onClick={reset}>
+            Start
+          </span>
+        </Button>
+      </Toolbar>
+    </AppBar>
+
+    // <StyledNav>
+    //   <StyledStart onClick={reset}>start</StyledStart>
+    //   {userInfo}
+    // </StyledNav>
   );
 }
