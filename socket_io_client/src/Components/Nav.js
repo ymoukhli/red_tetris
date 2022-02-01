@@ -32,6 +32,7 @@ export default function Nav({ io }) {
     });
 
     io.on("collided", ({ username, score, lines, user_id }) => {
+      console.log({ username, score, lines, user_id });
       setRoom((prev) => {
         const tmp = { ...prev };
         tmp[user_id].score = score;

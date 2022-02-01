@@ -78,3 +78,13 @@ export const StyledJoinGame = styled.div`
     }
   }
 `;
+
+export const Wrap = styled.div`
+  .container{
+    text-align: -webkit-center;
+  }
+  .container .alert{
+    width : 500px;
+    text-align: start;
+  }
+`
