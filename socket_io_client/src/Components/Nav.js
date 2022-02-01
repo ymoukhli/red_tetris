@@ -14,53 +14,51 @@ const StyledStart = styled.button`
     padding: 1em 3em;
 `
 
-export default function Nav({io, reset}) {
 
-    const [room, setRoom] = useState([]);
-
-    const collided = ({username, score, lines}) => {
-        setRoom(prev => {
-            const tmp = [...prev];
-            const arr = tmp.find(e => e.username === username);
-            if (arr)
-            {
-                arr.score = score;
-                arr.lines = lines;
-            }
-            return tmp;
-        })
-    }
-    const left = ({ username }) => {
-        setRoom(prev => {
-            console.log(prev);
-            return prev.filter(e => e.username !== username)
+export default function Nav({ io ,started}) {
+    const [room, setRoom] = useState({});
+    const [roomName, setRoomName] = useState(null);
+  
+    const reset = () => {
+      if (roomName && !started) {
+        io.emit("GameStarter", roomName, (data) => {
+          if (typeof data == "string") {
+            console.log("issue", data);
+          } else {
+            console.log("passed game start");
+            io.emit("startGame", roomName);
+          }
         });
-    }
-    const joined = (users) => {
-        const arr = [];
-        for (let user in users)
-        {
-            arr.push({username : users[user].username, score : users[user].score, lines: users[user].score});
-        }
-        setRoom(arr);
-        
-    }
+      } else {
+        console.log("error roomName not Set");
+      }
+    };
+  
     useEffect(() => {
-        console.log("EFFECT NAV")
-        io.on("joined", joined)
+      io.on("joined", ({ room, users }) => {
+        setRoom(users);
+        setRoomName(room);
+      });
+  
+      io.on("collided", ({ score, lines, user_id }) => {
+        setRoom((prev) => {
+          const tmp = { ...prev };
+          tmp[user_id].score = score;
+          tmp[user_id].lines = lines;
+          return tmp;
+        });
+      });
+  
+      io.on("left", ({ userID }) => {
+        setRoom((prev) => {
+          const tmp = { ...prev };
+          delete tmp[userID];
+          return tmp;
+        });
+      });
+    }, []);
     
-        io.on("collided", collided)
-    
-        io.on("left", left)
-
-        return (() => {
-            io.off("joined", joined)
-            io.off("collided", collided)
-            io.off("left", left)  
-        })
-    }, [io])
-    
-    const userInfo = room.map((x, i) => <InfoCard key={i} username={x.username} score={x.score} lines={x.lines}></InfoCard>);
+    const userInfo = Object.values(room).map((x) => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
 
     return (<StyledNav>
         <StyledStart onClick={reset}>start</StyledStart>

@@ -1,152 +1,45 @@
-const express = require("express");
-const http = require("http");
-const { nextTick } = require("process");
-const socketIo = require("socket.io");
-const cors = require("cors")
-const port = process.env.PORT || 4001;
-const index = require("./routes/index");
-const { GameManager } = require("./utilitys/GameManger");
-const router = express.Router();
-const  {joinRoom, RandomTetros} = require("./utilitys/utilitys");
 
-const { clearInterval } = require("timers");
-const { access } = require("fs");
-const app = express();
-const rooms = {};
-const locked = {};
-const users = {};
+const express = require('express')
+const cors = require('cors')
+const app = express()
+const server = require('http').Server(app);
+const sockets = require('./sockets')
+require("dotenv").config();
 
-app.use(index);
+io = sockets.startSocketServer(server);
 
-const logAll = () => {
+app.set('socketio', io);
 
-  console.log(`********************************`)
-  console.log(`locked room :`,locked)
-  console.log(`rooms :`, rooms)
-  console.log(`users :`, users)
-  console.log(`*********||||||||||||||*********`)
-}
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors : {
-    origin: "*",
-    methods: ["GET","POST"]
+app.use(cors())
+
+
+const router = express.Router()
+app.use('/', router)
+
+
+// log the call's in the api side
+router.use((req, res, next) => {
+  const path = req.originalUrl.replace(/\?.*$/, "");
+  if (Object.keys(req.query).length > 0) {
+    console.log(req.method, path, req.query);
+  } else {
+    console.log(req.method, path);
   }
+  next(); // make sure we go to the next routes and don't stop here
 });
 
-const removeUser = (id, socket) => {
-  if (users[id])
-  {
-    const room = users[id].room;
-    rooms[room] =  rooms[room].filter(e => e.id !== id);
-    if (rooms[room].length === 0)
-      delete locked[room];
-    else if (rooms[room].length === 1)
-    {
-      io.to(room).emit("noMulty");
-    }
-    delete users[id];
-  }
-}
+/*-----------------------------------*/
 
-const addUser = (id, room, username, playground, lines, score) => {
-  if (userExist(room, username)) return false;
-  if (!rooms[room])
-  {
-    rooms[room] = [];
-  }
-  console.log("ADDING")
-  console.log("adding user || ", locked[room]);
-  if (!locked[room] || locked[room].tetrArray.length === 0)
-    locked[room] = {state: false, tetrArray: RandomTetros(8)};
+//in here we are going to require the module files for all the data we have in the data base
+router.use('/rooms', require('./controllers/rooms'));  
 
-  console.log("adding user || ", locked[room]);
-  rooms[room].push({id, username, playground, lines, score });
-  users[id] = { room, username, playground, lines, score};
-  console.log(users);
-  return true;
-}
-const userExist = (room, username) => {
-  if (!rooms[room]) return false;
-  return Boolean(rooms[room].find(e => e.username === username));
-}
-const usersInRoom = (room) => rooms[room] ? rooms[room].length : 0;
 
-io.on("connection", (socket) => {
-  console.log("New client connected");
-  let interval;
-  let ioRoom;
-  const game = new GameManager(socket, io);
-
-  const queueTetriminos = () => {
-    if (locked[ioRoom].tetrArray.length - game.tetrArrayIndexer <= 8)
-        locked[ioRoom].tetrArray.push(...(RandomTetros(8)));
-      if (game.tetrArray.length - game.tetrArrayIndexer <= 8)
-        game.tetrArray = [...locked[ioRoom].tetrArray];
-  }
-  socket.on("move", (data) => {
-    
-    if (game.move(data.x,data.y))
-    {
-      console.log("--@>",locked[ioRoom].tetrArray.length - game.tetrArrayIndexer);
-      queueTetriminos();
-      socket.emit("respond", game.Grid.playground);
-       
-    }
-  })
-
-  socket.on("rotate", (sok) => {
-    if (game.rotate())
-    {
-      socket.emit("respond", game.Grid.playground);
-    }
-  })
-
-  socket.on("start", () => {
-    if (locked[users[socket.id]] || locked[users[socket.id].room].state === true) return ;
-    locked[users[socket.id].room].state = true;
-    io.to(users[socket.id].room).emit("startGame");
-  })
-
-  socket.on("gameStarted", () => {
-    if (interval) return;
-    io.to(ioRoom).emit("display", game.tetrArray.slice(game.tetrArrayIndexer + 1))
-    interval = setInterval(() => {
-      game.move();
-      queueTetriminos();
-      socket.emit("respond", game.Grid.playground);
-    }, 1000);
-  })
-  socket.on("joinRoom", ({username, room}) => {
-    
-    if (!username || !room) return ;
-    if (!addUser(socket.id, room, username, game.Grid.playground, game.lines, game.score, socket)) return;
-    socket.join(room);
-    game.addData(room, username, locked[room].tetrArray);
-    socket.emit("join");
-    ioRoom = room;
-    if (rooms[room].length >= 2)
-    {
-      io.to(room).emit("multy");
-    }
-    io.to(room).emit("joined", rooms[room]);
-  })
-
-  socket.on("disconnect", () => {
-    // disconnect
-    if (!users[socket.id]) return ;
-    io.to(users[socket.id].room).emit("left", {
-      lines: game.lines,
-      score: game.score,
-      username: game.username,
-      id: socket.id
-    });
-    socket.leave(users[socket.id].room);
-    removeUser(socket.id, socket);
-    clearInterval(interval);
-  });
-
-  socket.on("end", () => console.log("ended *********************"))
+// controle the routs cals in app routes
+router.use((req, res) => {
+  console.log("ROUTER 404");
+  return res.status(404).json({ err: "404" });
 });
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+const PORT = process.env.PORT || 80;
+server.listen(PORT);
+console.log(`Started on ${PORT}`);

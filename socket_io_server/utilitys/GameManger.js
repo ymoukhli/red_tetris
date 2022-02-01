@@ -1,33 +1,23 @@
 const { Grid } = require("./Grid");
 const { Player } = require("./Player");
 const { getRandomTetri } = require("./tetrimino");
-const { checkLineInGrid, generateTetros } = require("./utilitys")
+const utils = require("./utilitys")
 const GameManager = class {
 
     // ---------- constructor ------- ///
-    constructor(socket, io)
+    constructor(username, room, arr, user_id)
     {
-        this.Player = undefined;
-        this.Grid = new Grid(12, 20)
-        this.socket = socket;
-        this.io = io;
+        this.id = user_id
+        this.Grid = new Grid(10, 20)
         this.lines = 0;
         this.score = 0;
-        this.room = "";
-        this.username = "";
-        this.tetrArray = [];
+        this.room = room;
+        this.username = username;
+        this.Player = new Player(arr[0]);
         this.tetrArrayIndexer = 0;
     }
 
-    addData = (room , username, arr) => {
-        this.room = room; 
-        this.username = username
-        this.Player = new Player(arr[0]);
-        this.tetrArray = [...arr];
-
-    };
-
-    updateGrid = () =>
+    updateGrid = (tetrArray) =>
     {
         console.log("updating Grid in Grid class");
         // ----- > reset grid < ---------
@@ -46,7 +36,7 @@ const GameManager = class {
         
         if (this.Player.collided)
         {
-            const arr = checkLineInGrid(newGrid);
+            const arr = utils.checkLineInGrid(newGrid);
             this.lines += arr.length;
             
             
@@ -57,51 +47,53 @@ const GameManager = class {
                 newGrid.unshift(Array(newGrid[0].length).fill([0,'clear']))
             }
 
-            this.io.to(this.room).emit("collided", {
+            this.score += 1
+            if (tetrArray.length - this.tetrArrayIndexer <= 8) {
+                tetrArray.push(...utils.RandomTetros(8));
+            }
+            console.log(tetrArray.length - this.tetrArrayIndexer);
+            
+            io.to(this.room).emit("collided", {
                 playground : newGrid,
                 lines: this.lines,
                 score: this.score,
                 username: this.username,
-                id: this.socket.id
+                user_id: this.id
             })
-
-            if (this.tetrArrayIndexer >= this.tetrArray.length)
-            {
-                console.warn("index exced array");
-            }
-            else {
-                this.tetrArrayIndexer += 1;
-            }
-            this.socket.emit("display", this.tetrArray.slice(this.tetrArrayIndexer + 1));
-            this.Player = new Player(this.tetrArray[this.tetrArrayIndexer]);
+            io.to(this.id).emit("display", tetrArray.slice(this.tetrArrayIndexer + 1));
+            this.tetrArrayIndexer += 1;
+            this.Player = new Player(tetrArray[this.tetrArrayIndexer]);
         }
+
+        // ---------- > delete line if any < --------//
 
         return newGrid;
     }
 
     // for setinterval move() :)
 
-    move = (x = 0, y = 1) => {
+    move = (x = 0, y = 1, room = null, tetrArray = []) => {
+        console.log('from room', room);
         if (this.Player.updatePlayerPos(x, y, this.Grid))
         {
-            this.Grid.playground = this.updateGrid();
+            this.Grid.playground = this.updateGrid(tetrArray);
             return true;
         }
         else if (y === 1)
         {
             this.Player.collided = true;
-            this.Grid.playground = this.updateGrid();
+            this.Grid.playground = this.updateGrid(tetrArray);
             return true;
         }
         return false;
         // =========================> <========================= //
     }
 
-    rotate = () => {
+    rotate = (tetrArray) => {
 
         if (this.Player.rotatePlayer(0,0,this.Grid))
         {
-            this.Grid.playground = this.updateGrid();
+            this.Grid.playground = this.updateGrid(tetrArray);
             return true;
         }
         return false;

@@ -29,12 +29,9 @@ export default function Display({io})
     }
     useEffect(() => {
 
-        // io.on("join", display)
-
         io.on("display", display)
         return (() => {
             io.off("display", display);
-            // io.off("join", display);
         })
     },[io])
     return (
