@@ -44,6 +44,7 @@ module.exports = {
 
       socket.on("startGame", (room) => {
         Rooms.startGame(room);
+        io.to(room).emit('GStart')
       });
       //#endregion
 

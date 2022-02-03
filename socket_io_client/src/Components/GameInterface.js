@@ -1,6 +1,4 @@
 import React from "react";
-import { useTetris } from "../hooks/tetris";
-import { useGrid } from "../hooks/grid";
 import JoinGame from "./JoinGame";
 import MasterDisplay from "../Components/MasterDisplay";
 import Nav from "../Components/Nav";
@@ -9,7 +7,8 @@ import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { connectUser, SetGameInterface } from "../Store/actions";
+import { connectUser } from "../Store/actions";
+import { Sockets } from "../sockets"
 
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -17,6 +16,9 @@ import Container from "@mui/material/Container";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import { StyledNotification } from "../Styles/StyledGameInterface";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -35,17 +37,12 @@ export default function GameInterface() {
 
   //#endregion
 
-  const [tetris, resetTetris] = useTetris();
-  const [grid, setBackendGrid] = useGrid(tetris, resetTetris);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const userID = uuidv4();
     axios
-      .get(
-        `http://localhost:4001/rooms/${e.target.room.value}/${e.target.username.value}/${userID}`
-      )
-      .then(() => {
+      .get(`http://localhost:4001/rooms/${e.target.room.value}/${e.target.username.value}/${userID}`)
+      .then((response) => {
         const ENDPOINT = "http://127.0.0.1:4001/";
         const options = {
           query: {
@@ -55,20 +52,13 @@ export default function GameInterface() {
         };
         const socket = io(ENDPOINT, options);
 
-        socket.emit("joinRoom", e.target.room.value);
-        dispatch(SetGameInterface({ socket, userID, room: e.target.room.value }));
+        Sockets({ socket, userID, room: e.target.room.value, data: response.data.data, dispatch });
       })
       .catch((err) => {
-        dispatch(connectUser(err.response.data.response || err.response.data));
+        dispatch(connectUser(err.response.data.response || err.response.data || err.response));
         console.log(err.response);
       });
   };
-
-  if (state.GameInterface.joined) {
-    state.GameInterface.sockets.on("respond", (data) => {
-      setBackendGrid(data.playground);
-    });
-  }
 
   const move = ({ key }) => {
     if (state.GameInterface.joined && state.Nav.GameStart) {
@@ -87,13 +77,25 @@ export default function GameInterface() {
   return (
     <React.Fragment>
       <Container>
-        {!state.GameInterface.joined && state.GameInterface.sockets && (
-          <JoinGame handleSubmit={handleSubmit}></JoinGame>
-        )}
+        {!state.GameInterface.joined && state.GameInterface.sockets && <JoinGame handleSubmit={handleSubmit}></JoinGame>}
 
         {state.GameInterface.joined && state.GameInterface.sockets && (
           <Box onKeyDown={(e) => move(e)} tabIndex="-1">
-            <Nav io={state.GameInterface.sockets}></Nav>
+            <Nav></Nav>
+            {state.Nav.alert.show ? (
+              <StyledNotification>
+                <div id="notif" className="visible">
+                  <Alert severity={state.Nav.alert.type} className="alert">
+                    <AlertTitle>
+                      <strong>{state.Nav.alert.message}</strong>
+                    </AlertTitle>
+                  </Alert>
+                </div>
+              </StyledNotification>
+            ) : (
+              ""
+            )}
+
             <Stack
               direction={{ xs: "column", sm: "row" }}
               justifyContent="space-between"
@@ -102,12 +104,9 @@ export default function GameInterface() {
               divider={<Divider orientation="vertical" flexItem />}
             >
               <Item>
-                <MasterDisplay grid={grid}></MasterDisplay>
+                <MasterDisplay></MasterDisplay>
               </Item>
-              <DisplayForOther
-                io={state.GameInterface.sockets}
-                user_id={state.GameInterface.user_id}
-              ></DisplayForOther>
+              <DisplayForOther></DisplayForOther>
             </Stack>
           </Box>
         )}

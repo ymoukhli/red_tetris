@@ -8,7 +8,7 @@ const GameManager = class {
     constructor(username, room, arr, user_id)
     {
         this.id = user_id
-        this.Grid = new Grid(12, 20)
+        this.Grid = new Grid(10, 20)
         this.lines = 0;
         this.score = 0;
         this.room = room;

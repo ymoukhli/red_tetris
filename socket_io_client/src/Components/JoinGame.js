@@ -12,7 +12,6 @@ export default function JoinGame({ handleSubmit }) {
   const state = useSelector((state) => {
     return state;
   });
-  // const dispatch = useDispatch();
   
   //#endregion
 

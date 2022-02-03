@@ -1,23 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import InfoCard from "./InfoCard";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import { useSelector, useDispatch } from "react-redux";
+import { StartGame } from "../Store/actions";
 
-export default function Nav({ io }) {
-  const [room, setRoom] = useState({});
-  const [roomName, setRoomName] = useState(null);
+export default function Nav() {
+  //#region redux
+
+  const state = useSelector((state) => {
+    return state;
+  });
+
+  const dispatch = useDispatch();
+  //#endregion
 
   const reset = () => {
-    if (roomName) {
-      io.emit("GameStarter", roomName, (data) => {
+    if (state.GameInterface.roomName) {
+      state.GameInterface.sockets.emit("GameStarter", state.GameInterface.roomName, (data) => {
         if (typeof data == "string") {
           console.log("issue", data);
+          dispatch(StartGame({ type: "error", message: data }));
         } else {
           console.log("passed game start");
-          io.emit("startGame", roomName);
+          state.GameInterface.sockets.emit("startGame", state.GameInterface.roomName);
         }
       });
     } else {
@@ -25,32 +34,7 @@ export default function Nav({ io }) {
     }
   };
 
-  useEffect(() => {
-    io.on("joined", ({ room, users }) => {
-      setRoom(users);
-      setRoomName(room);
-    });
-
-    io.on("collided", ({ username, score, lines, user_id }) => {
-      console.log({ username, score, lines, user_id });
-      setRoom((prev) => {
-        const tmp = { ...prev };
-        tmp[user_id].score = score;
-        tmp[user_id].lines = lines;
-        return tmp;
-      });
-    });
-
-    io.on("left", ({ userID }) => {
-      setRoom((prev) => {
-        const tmp = { ...prev };
-        delete tmp[userID];
-        return tmp;
-      });
-    });
-  }, []);
-
-  const userInfo = Object.values(room).map((x) => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
+  const userInfo = Object.values(state.Nav.users).map((x) => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
 
   return (
     <AppBar position="fixed" color="primary" sx={{ top: 0, bottom: "auto" }}>
@@ -61,17 +45,10 @@ export default function Nav({ io }) {
         <Box sx={{ flexGrow: 1 }} />
         {userInfo}
         <Box sx={{ flexGrow: 1 }} />
-        <Button color="inherit" variant="contained">
-          <span style={{ color: "black", fontWeight: "bold" }} onClick={reset}>
-            Start
-          </span>
+        <Button color="inherit" variant="contained" onClick={reset}>
+          <span style={{ color: "black", fontWeight: "bold" }}>Start</span>
         </Button>
       </Toolbar>
     </AppBar>
-
-    // <StyledNav>
-    //   <StyledStart onClick={reset}>start</StyledStart>
-    //   {userInfo}
-    // </StyledNav>
   );
 }

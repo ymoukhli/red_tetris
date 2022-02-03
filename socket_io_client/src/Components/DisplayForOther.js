@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { StyledDisplayForOther } from "../Styles/StyledDisplayForOther";
-import { StyledMasterDisplay } from "../Styles/StyledMasterDisplay";
+import React from "react";
 import DisplayCard from "./DisplayCard";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
-import Container from "@mui/material/Container";
 import { styled } from "@mui/material/styles";
+import { useSelector } from "react-redux";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -15,39 +13,16 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function DisplayForOther({ io, user_id }) {
-  const [grids, setGrids] = useState({});
+export default function DisplayForOther() {
+  //#region redux
 
-  useEffect(() => console.log("GRIDS", grids), [grids]);
+  const state = useSelector((state) => {
+    return state;
+  });
 
-  useEffect(() => {
-    io.on("joined", (data) => {
-      const tmp = {};
-      console.log("DATA", data.users, user_id);
-      for (const [key, value] of Object.entries(data.users)) {
-        // console.log(`${key}: ${value}`);
-        if (key != user_id) tmp[value.username] = value.Grid.playground;
-      }
-      setGrids(tmp);
-    });
+  //#endregion
 
-    io.on("left", ({ username }) => {
-      setGrids((prev) => {
-        const tmp = { ...prev };
-        delete tmp[username];
-        return tmp;
-      });
-    });
-    io.on("collided", ({ playground, username }) => {
-      setGrids((prev) => {
-        const tmp = { ...prev };
-        if (tmp[username]) tmp[username] = playground;
-        return tmp;
-      });
-    });
-  }, [io]);
-
-  const display = Object.values(grids).map((grid) => (
+  const display = Object.values(state.Users.grids).map((grid) => (
     <Grid item lg={6} md={6} sm={12} xs={12}>
       <Item>
         <DisplayCard grid={grid}></DisplayCard>

@@ -1,13 +1,12 @@
 import React from "react";
 import { StyledPlayground } from "../Styles/StyledPlayground";
-import { dimenssion } from "../Utilitys/generateGrid";
 import Cell from "./Cell";
 
 
 export default function Playground({grid})
 {
     return (
-        <StyledPlayground height={dimenssion.height} width={dimenssion.width}>
+        <StyledPlayground height={20} width={10}>
             {grid.map(x => x.map((y,i) => <Cell
              key={i} 
              type={y[0]} 
