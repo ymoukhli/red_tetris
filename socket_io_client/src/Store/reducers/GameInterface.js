@@ -1,7 +1,7 @@
 const data = {
   joined: false,
   sockets: {},
-  user_id: {},
+  user_id: null,
   roomName: null,
   data: {},
   grid: [],

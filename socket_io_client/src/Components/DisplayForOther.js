@@ -23,15 +23,15 @@ export default function DisplayForOther() {
   //#endregion
 
   const display = Object.values(state.Users.grids).map((grid) => (
-    <Grid item lg={6} md={6} sm={12} xs={12}>
+    <Grid item lg={"auto"}>
       <Item>
         <DisplayCard grid={grid}></DisplayCard>
       </Item>
     </Grid>
   ));
   return (
-    <Stack style={{ flexWrap: "wrap" }} direction={{ xs: "column", sm: "row" }} justifyContent="start" alignItems="center">
-      <Grid container spacing={2}>
+    <Stack style={{ flexWrap: "wrap", placeContent: "center" }} direction={{ xs: "column", sm: "row" }} justifyContent="start" alignItems="center">
+      <Grid style={{ placeContent: "center" }} container spacing={2} justifyContent="center" alignItems="center">
         {display}
       </Grid>
     </Stack>

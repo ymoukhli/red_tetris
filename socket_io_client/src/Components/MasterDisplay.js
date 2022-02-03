@@ -15,7 +15,7 @@ export default function MasterDisplay() {
 
   return (
     <StyledMasterDisplay>
-      <Playground grid={state.GameInterface.grid}></Playground>
+      <Playground grid={state.GameInterface.grid} master></Playground>
     </StyledMasterDisplay>
   );
 }

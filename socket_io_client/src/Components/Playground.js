@@ -3,10 +3,10 @@ import { StyledPlayground } from "../Styles/StyledPlayground";
 import Cell from "./Cell";
 
 
-export default function Playground({grid})
+export default function Playground({grid, master})
 {
     return (
-        <StyledPlayground height={20} width={10}>
+        <StyledPlayground height={20} width={10} size={master ? 60 : 40}>
             {grid.map(x => x.map((y,i) => <Cell
              key={i} 
              type={y[0]} 

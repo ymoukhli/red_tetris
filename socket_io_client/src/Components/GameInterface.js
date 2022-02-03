@@ -8,11 +8,10 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { connectUser } from "../Store/actions";
-import { Sockets } from "../sockets"
+import { Sockets } from "../sockets";
 
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
-import Container from "@mui/material/Container";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -76,7 +75,7 @@ export default function GameInterface() {
 
   return (
     <React.Fragment>
-      <Container>
+      <Box>
         {!state.GameInterface.joined && state.GameInterface.sockets && <JoinGame handleSubmit={handleSubmit}></JoinGame>}
 
         {state.GameInterface.joined && state.GameInterface.sockets && (
@@ -98,19 +97,20 @@ export default function GameInterface() {
 
             <Stack
               direction={{ xs: "column", sm: "row" }}
-              justifyContent="space-between"
+              justifyContent="center"
               alignItems="center"
-              spacing={{ xs: 1, sm: 2, md: 4 }}
+              spacing={{ md: 4, sm: 8 }}
               divider={<Divider orientation="vertical" flexItem />}
             >
               <Item>
                 <MasterDisplay></MasterDisplay>
               </Item>
+
               <DisplayForOther></DisplayForOther>
             </Stack>
           </Box>
         )}
-      </Container>
+      </Box>
     </React.Fragment>
   );
 }
