@@ -16,9 +16,8 @@ const StyledStart = styled.button`
 
 
 export default function Nav({ io ,started}) {
-    const [room, setRoom] = useState({});
-    const [roomName, setRoomName] = useState(null);
-  
+    const { room, roomName} = getSelection(state => state)
+
     const reset = () => {
       if (roomName && !started) {
         io.emit("GameStarter", roomName, (data) => {
@@ -34,29 +33,7 @@ export default function Nav({ io ,started}) {
       }
     };
   
-    useEffect(() => {
-      io.on("joined", ({ room, users }) => {
-        setRoom(users);
-        setRoomName(room);
-      });
-  
-      io.on("collided", ({ score, lines, user_id }) => {
-        setRoom((prev) => {
-          const tmp = { ...prev };
-          tmp[user_id].score = score;
-          tmp[user_id].lines = lines;
-          return tmp;
-        });
-      });
-  
-      io.on("left", ({ userID }) => {
-        setRoom((prev) => {
-          const tmp = { ...prev };
-          delete tmp[userID];
-          return tmp;
-        });
-      });
-    }, []);
+    
     
     const userInfo = Object.values(room).map((x) => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
 

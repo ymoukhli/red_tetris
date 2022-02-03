@@ -1,1 +1,8 @@
 export const JOIN = 'join'
+export const GRID = 'grid'
+export const SOCKET = 'socket'
+export const MULTIPLAYER = 'multiplayer'
+export const START = 'start'
+export const GRIDS = 'grids'
+export const ROOM = 'room'
+export const ROOMNAME = 'roomname'
