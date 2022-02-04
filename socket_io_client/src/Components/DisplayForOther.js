@@ -15,15 +15,11 @@ const StyledDisplayForOther = styled.div`
     grid-template-rows: 1fr 1fr;
 `
 
-export default function DisplayForOther({ io, user_id }) {
-    const [grids, setGrids] = useState({ });
-    const { multiPlayers } = useSelector(state => state);
-    const { setMultiplayer } = bindActionCreators(action, useDispatch())
-    useEffect(() => {
-      ///
-    }, [io]);
-    
+export default function DisplayForOther() {
+
+    const { multiPlayers , grids} = useSelector(state => state);
     const display = Object.values(grids).map((grid, i) => <DisplayCard key={i} grid={grid}></DisplayCard>)
+
     return (
     <React.Fragment>
         {multiPlayers && <StyledDisplayForOther>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import InfoCard from "./InfoCard";
 
@@ -16,7 +17,7 @@ const StyledStart = styled.button`
 
 
 export default function Nav({ io ,started}) {
-    const { room, roomName} = getSelection(state => state)
+    const { room, roomName} = useSelector(state => state)
 
     const reset = () => {
       if (roomName && !started) {
@@ -34,11 +35,10 @@ export default function Nav({ io ,started}) {
     };
   
     
-    
     const userInfo = Object.values(room).map((x) => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
 
     return (<StyledNav>
-        <StyledStart onClick={reset}>start</StyledStart>
+        <StyledStart onClick={reset} room>start</StyledStart>
         {userInfo}
     </StyledNav>)
 } 

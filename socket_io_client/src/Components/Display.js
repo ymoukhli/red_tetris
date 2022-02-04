@@ -27,16 +27,9 @@ export default function Display({io})
             })
         })
     }
-    useEffect(() => {
-
-        io.on("display", display)
-        return (() => {
-            io.off("display", display);
-        })
-    },[io])
     return (
         <StyledDisplay>
-            {tetriminos}
+            {/* {tetriminos} */}
         </StyledDisplay>
     )
 }

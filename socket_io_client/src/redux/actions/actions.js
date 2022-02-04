@@ -14,13 +14,24 @@ export function setGrid(grid)
     }
 }
 
-export function setGrids(grids)
+export function addGrid(data)
 {
     return (dispatch) => {
-        dispatch({ type: actions.GRIDS, payload: grids})
+        dispatch({ type: actions.ADDGRID , payload: data})
     }
 }
-
+export function updateGrid(data)
+{
+    return (dispatch) => {
+        dispatch({ type: actions.UPDATEGRID , payload: data})
+    }
+}
+export function removeGrid(data)
+{
+    return (dispatch) => {
+        dispatch({ type: actions.REMOVEGRID , payload: data})
+    }
+}
 export function setSocket(socket)
 {
     return (dispatch) => {
@@ -45,9 +56,18 @@ export function setRoomName(room)
 export function setRoom(room)
 {
     return (dispatch) => {
-        dispatch({ type: actions.START, payload: room})
+        dispatch({ type: actions.ROOM, payload: room})
     }
 }
+
+
+export function setUserID(id)
+{
+    return (dispatch) => {
+        dispatch({ type: actions.USERID, payload: id})
+    }
+}
+
 
 export function setStarted(boolean)
 {

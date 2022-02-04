@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { StyledGameInterface , StyledGameInterfaceWrapper } from "../Styles/StyledGameInterface";
 import JoinGame from "./JoinGame";
 import MasterDisplay from "../Components/MasterDisplay"
@@ -11,49 +11,45 @@ import io from "socket.io-client";
 import { useSelector, useDispatch} from "react-redux";
 import { bindActionCreators } from "redux";
 import { action } from "../redux/actions";
-
+import initSocket from "../sockets";
 
 const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
 `;
+
 export default function GameInterface() {
 
-    const [user_id, setUserID] = useState(null);
 
-    const dispatch = useDispatch();
-    const {joined, socket} = useSelector(state => state)
-    const { join , setGrid, setSocket, setRoomName} = bindActionCreators(action, dispatch);
-    const [started, setStarted] = useState(false);
-    const [multiPlayers, SetMultiPlayers] = useState(false);
-
+  const dispatch = useDispatch();
+  const ac = bindActionCreators(action, dispatch);
+  const { join , setRoomName, setUserID} = ac;
+  const state = useSelector(state => state)
+  const {joined, socket, userID, started} = state;
     const reset = () => {
       io.emit("start");
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const userID = uuidv4();
-        setUserID(userID);
+        const tmpUserID = uuidv4();
+        setUserID(tmpUserID);
         axios
-          .get(`http://localhost:4001/rooms/${e.target.room.value}/${e.target.username.value}/${userID}`)
+          .get(`http://localhost:4001/rooms/${e.target.room.value}/${e.target.username.value}/${tmpUserID}`)
           .then(() => {
             const ENDPOINT = "http://127.0.0.1:4001/";
             const options = {
               query: {
-                userId: userID,
+                userId: tmpUserID,
                 room: e.target.room.value,
               },
             };
             const sockets = io(ENDPOINT, options);
-    
             sockets.emit("joinRoom", e.target.room.value);
-            
-            // socket.emit("gameStarted")
-            setSocket(sockets);
             join(true);
             setRoomName(e.target.room.value);
+            initSocket(sockets, ac, state, tmpUserID);
           })
           .catch((err) => {
             console.log(err);
@@ -87,7 +83,7 @@ export default function GameInterface() {
             <Nav io={socket} reset={reset} started={started}></Nav>
             <StyledWrapper>
                 <MasterDisplay io={socket}></MasterDisplay>
-                <DisplayForOther io={socket} user_id={user_id}></DisplayForOther>
+                <DisplayForOther io={socket} user_id={userID}></DisplayForOther>
             </StyledWrapper>
             </React.StrictMode>
         </StyledGameInterface>}

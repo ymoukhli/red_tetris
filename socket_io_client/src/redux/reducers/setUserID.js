@@ -1,8 +1,8 @@
 import * as actionType from "../actionTypes"
 
-const reducer = (state = "", action) => {
+const reducer = (state = null, action) => {
     switch (action.type) {
-        case actionType.ROOMNAME:
+        case actionType.USERID:
             return action.payload;
         default:
             return state;

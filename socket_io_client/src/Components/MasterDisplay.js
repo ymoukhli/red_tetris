@@ -14,13 +14,7 @@ const StyledMasterDisplay = styled.div`
 export default function MasterDisplay( {io})
 {
     const {grid} = useSelector(state => state);
-    const dispatch = useDispatch();
-    const { setGrid } =  bindActionCreators(action, dispatch);
-    useEffect(() => {
-        io.on("respond", (data) => {
-            setGrid(data.playground);
-          });
-    },[])
+    
     return (
     <StyledMasterDisplay>
         <Playground grid={grid}></Playground>

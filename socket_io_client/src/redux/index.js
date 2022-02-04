@@ -7,6 +7,7 @@ import socket from './reducers/socket';
 import started from './reducers/start';
 import room from './reducers/setRoom';
 import roomName from './reducers/setRoomName';
+import userID from './reducers/setUserID';
 
 
 
@@ -18,7 +19,8 @@ const reducers = combineReducers({
     socket,
     started,
     room,
-    roomName
+    roomName,
+    userID
 })
 
 export default reducers;

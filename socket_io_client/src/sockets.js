@@ -1,40 +1,41 @@
-import { useDispatch, useSelector } from "react-redux";
-import { bindActionCreators } from "redux";
-import { action } from "./redux/actions";
+import { useSelector } from "react-redux";
+import { removeGrid } from "./redux/actions/actions";
+import * as actionType from "./redux/actionTypes";
 
-export default Socket = (io) => {
+export default function Socket(io, ac, state,userID) {
 
-    const { setSocket, setMultiplayer, setGrid, join, setStarted, setGrids} = bindActionCreators(action, useDispatch())
-    const {joined,
-        grid,
+    const {
+        setSocket,
+        setMultiplayer,
+        setGrid,
+        setRoom,
+        setStarted,
+        removeGrid,
+        updateGrid,
+        addGrid
+    } = ac;
+
+    const {
         grids,
-        socket,
-        room,
-        roomName,
-        started} = useSelector(state => state);
+        room
+    } = state;
     setSocket(io);
 
-    socket.on("started", ()=>{
+    io.on("started", () => {
         setStarted(true);
     });
-    socket.on("respond", (data) => {
+    io.on("respond", (data) => {
         setGrid(data.playground);
     });
-    socket.on("joined", ({ room, users }) => {
+    io.on("joined", ({ users }) => {
         const tmp = {};
-
-        for (const [key, value] of Object.entries(users)) {
-          if (key != user_id) tmp[value.username] = value.Grid.playground;
-        }
-        setGrids(tmp);
+        console.log("USER", users);
+        addGrid({users, userID});
+        setRoom(users)
     });
   
-    socket.on("left", ({ username, userID }) => {
-        setGrids(() => {
-            const tmp = { ...grids };
-            delete tmp[username];
-            return tmp;
-        });
+    io.on("left", ({ username, userID }) => {
+        removeGrid({userID});
 
         setRoom(() => {
             const tmp = { ...room };
@@ -43,26 +44,18 @@ export default Socket = (io) => {
             });
     });
 
-    socket.on("collided", ({ playground, username, score, lines, user_id }) => {
-        setGrids(() => {
-            const tmp = { ...grids };
-            if (tmp[username]) tmp[username] = playground;
-            return tmp;
-        });
-
-        setRoom(() => {
-        const tmp = { ...room };
-        tmp[user_id].score = score;
-        tmp[user_id].lines = lines;
-        return tmp;
-        });
+    io.on("collided", ({ playground, username, score, lines, user_id }) => {
+        updateGrid({username, playground});
+        // tmp[user_id].score = score;
+        // tmp[user_id].lines = lines; 
+        // setRoom(tmp);
     });
 
-    socket.on("multy", () => {
+    io.on("multy", () => {
         setMultiplayer(true);
     })
 
-    socket.on("noMulty", () => {
+    io.on("noMulty", () => {
         setMultiplayer(false);
     })
 }
