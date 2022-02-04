@@ -1,5 +1,4 @@
 import React from "react";
-import InfoCard from "./InfoCard";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,30 +10,26 @@ import { StartGame } from "../Store/actions";
 export default function Nav() {
   //#region redux
 
-  const state = useSelector((state) => {
-    return state;
-  });
+  const {GameInterface, Users} = useSelector(state => state);
 
   const dispatch = useDispatch();
   //#endregion
 
   const reset = () => {
-    if (state.GameInterface.roomName) {
-      state.GameInterface.sockets.emit("GameStarter", state.GameInterface.roomName, (data) => {
+    if (GameInterface.roomName) {
+      GameInterface.sockets.emit("GameStarter", GameInterface.roomName, (data) => {
         if (typeof data == "string") {
           console.log("issue", data);
           dispatch(StartGame({ type: "error", message: data }));
         } else {
           console.log("passed game start");
-          state.GameInterface.sockets.emit("startGame", state.GameInterface.roomName);
+          GameInterface.sockets.emit("startGame", GameInterface.roomName);
         }
       });
     } else {
       console.log("error roomName not Set");
     }
   };
-
-  const userInfo = Object.values(state.Nav.users).map((x) => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
 
   return (
     <AppBar position="fixed" color="primary" sx={{ top: 0, bottom: "auto" }}>
@@ -43,7 +38,6 @@ export default function Nav() {
           Red tetris
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
-        {userInfo}
         <Box sx={{ flexGrow: 1 }} />
         <Button color="inherit" variant="contained" onClick={reset}>
           <span style={{ color: "black", fontWeight: "bold" }}>Start</span>

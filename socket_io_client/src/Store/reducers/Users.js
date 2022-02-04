@@ -1,28 +1,44 @@
 const data = {
-  grids: {},
+  users: {},
 };
 
 const Users = (state = data, action) => {
   let tmp = {};
   switch (action.type) {
-    case "ADD_USERS_GRID":
+    case "ADD_USERS":
+      console.log("ADD_USERS");
       for (const [key, value] of Object.entries(action.payload.users)) {
-        if (key !== action.payload.userID) tmp[value.username] = value.Grid.playground;
+        if (key !== action.payload.userID) {
+          tmp[value.id] = {
+            grid: value.Grid.playground,
+            score: value.score,
+            lines: value.lines,
+            username: value.username,
+            id: value.id,
+          };
+        }
       }
       return {
-        grids: tmp,
+        users: tmp,
       };
-    case "UPDATE_USERS_GRID":
-      tmp = state.grids;
-      if (tmp[action.payload.username]) tmp[action.payload.username] = action.payload.playground;
+    case "UPDATE_USERS":
+      console.log("UPDATE_USERS");
+      tmp = state.users;
+      if (tmp[action.payload.userID])
+        tmp[action.payload.userID] = {
+          grid: action.payload.playground,
+          score: action.payload.score,
+          lines: action.payload.lines,
+        };
       return {
-        grids: tmp,
+        users: tmp,
       };
-    case "REMOVE_USERS_GRID":
-      tmp = state.grids;
+    case "REMOVE_USERS":
+      console.log("REMOVE_USERS");
+      tmp = state.users;
       delete tmp[action.payload];
       return {
-        grids: tmp,
+        users: tmp,
       };
     default:
       return state;

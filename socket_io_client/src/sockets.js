@@ -1,8 +1,5 @@
 import {
   SetGameInterface,
-  AddUsers,
-  UpdateUsers,
-  RemoveUsers,
   StartGame,
   SetGrid,
   AddUsersGrid,
@@ -27,20 +24,17 @@ export const Sockets = ({ socket, userID, room, data, dispatch }) => {
 
     socket.on("joined", ({ room, users }) => {
       console.log(`emit, joined`);
-      dispatch(AddUsers(users));
       dispatch(AddUsersGrid({ users, userID }));
     });
 
     socket.on("collided", ({ username, score, lines, user_id, playground }) => {
       console.log(`emit, collided`);
-      dispatch(UpdateUsers({ username, score, lines, user_id }));
-      dispatch(UpdateUsersGrid({ username, playground }));
+      dispatch(UpdateUsersGrid({ username, score, lines, userID: user_id, playground  }));
     });
 
     socket.on("left", ({ username, userID }) => {
       console.log(`emit, left`);
-      dispatch(RemoveUsers(userID));
-      dispatch(RemoveUserGrid(username));
+      dispatch(RemoveUserGrid(userID));
     });
     /////////////////////////
 

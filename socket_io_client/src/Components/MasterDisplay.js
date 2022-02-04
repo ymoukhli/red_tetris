@@ -7,15 +7,13 @@ import { useSelector } from "react-redux";
 export default function MasterDisplay() {
   //#region redux
 
-  const state = useSelector((state) => {
-    return state;
-  });
+  const grid = useSelector(state => state.GameInterface.grid);
 
   //#endregion
 
   return (
     <StyledMasterDisplay>
-      <Playground grid={state.GameInterface.grid} master></Playground>
+      <Playground grid={grid} master></Playground>
     </StyledMasterDisplay>
   );
 }

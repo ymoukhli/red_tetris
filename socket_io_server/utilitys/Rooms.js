@@ -39,7 +39,7 @@ const Rooms = class {
         value.move(0, 1, room, this.data[room].genaratedTetros);
         io.to(key).emit("respond", value.Grid);
       }
-    }, 500);
+    }, 1000);
   }
 
   clearRoomInterval(room) {

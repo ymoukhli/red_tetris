@@ -1,7 +1,7 @@
 import React from "react";
 import JoinGame from "./JoinGame";
 import MasterDisplay from "../Components/MasterDisplay";
-import Nav from "../Components/Nav";
+import Navigator from "../Components/Nav";
 import DisplayForOther from "./DisplayForOther";
 import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
@@ -29,9 +29,8 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function GameInterface() {
   //#region redux
 
-  const state = useSelector((state) => {
-    return state;
-  });
+  const {GameInterface, Nav} = useSelector(state => state);
+ 
   const dispatch = useDispatch();
 
   //#endregion
@@ -60,15 +59,15 @@ export default function GameInterface() {
   };
 
   const move = ({ key }) => {
-    if (state.GameInterface.joined && state.Nav.GameStart) {
+    if (GameInterface.joined && Nav.GameStart) {
       if (key === "ArrowRight" || key === "d") {
-        state.GameInterface.sockets.emit("move", { x: 1, y: 0 });
+        GameInterface.sockets.emit("move", { x: 1, y: 0 });
       } else if (key === "ArrowLeft" || key === "a") {
-        state.GameInterface.sockets.emit("move", { x: -1, y: 0 });
+        GameInterface.sockets.emit("move", { x: -1, y: 0 });
       } else if (key === "ArrowDown" || key === "s") {
-        state.GameInterface.sockets.emit("move", { x: 0, y: 1 });
+        GameInterface.sockets.emit("move", { x: 0, y: 1 });
       } else if (key === "ArrowUp" || key === "w") {
-        state.GameInterface.sockets.emit("rotate");
+        GameInterface.sockets.emit("rotate");
       }
     }
   };
@@ -76,17 +75,17 @@ export default function GameInterface() {
   return (
     <React.Fragment>
       <Box>
-        {!state.GameInterface.joined && state.GameInterface.sockets && <JoinGame handleSubmit={handleSubmit}></JoinGame>}
+        {!GameInterface.joined && GameInterface.sockets && <JoinGame handleSubmit={handleSubmit}></JoinGame>}
 
-        {state.GameInterface.joined && state.GameInterface.sockets && (
+        {GameInterface.joined && GameInterface.sockets && (
           <Box onKeyDown={(e) => move(e)} tabIndex="-1">
-            <Nav></Nav>
-            {state.Nav.alert.show ? (
+            <Navigator></Navigator>
+            {Nav.alert.show ? (
               <StyledNotification>
                 <div id="notif" className="visible">
-                  <Alert severity={state.Nav.alert.type} className="alert">
+                  <Alert severity={Nav.alert.type} className="alert">
                     <AlertTitle>
-                      <strong>{state.Nav.alert.message}</strong>
+                      <strong>{Nav.alert.message}</strong>
                     </AlertTitle>
                   </Alert>
                 </div>
