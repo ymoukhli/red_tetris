@@ -35,6 +35,7 @@ module.exports = {
         io.to(name_room).emit("joined", {
           room: name_room,
           users: roomObj.players,
+          tetriminosQueue: roomObj.genaratedTetros
         });
       });
       //#endregion

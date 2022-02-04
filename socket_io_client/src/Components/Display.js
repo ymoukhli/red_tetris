@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import * as Shape  from "./Shapes";
 
@@ -13,23 +14,21 @@ export const StyledDisplay = styled.div`
     padding-top: 12px;
     background-color: #655D8A; 
 `
-export default function Display({io})
-{
-    const [tetriminos, SetTetriminos] = useState([]);
 
-    const display = (data) => {
-        console.log("UPDATATING")
-        SetTetriminos(() => {
-            const tmp = data.slice(0,4)
-            return tmp.map(e => {
-                    const Component = Shape[e];
-                    return <Component />;
-            })
+export default function Display()
+{
+    const { tetrminosQueue , started }  = useSelector(state => state);
+        let tetriminos = [];
+        if (started){
+            tetriminos = tetrminosQueue.map(e => {
+                const Component = Shape[e];
+                return <Component />;
         })
-    }
-    return (
+
+        }
+        return (
         <StyledDisplay>
-            {/* {tetriminos} */}
+            {tetriminos}
         </StyledDisplay>
-    )
+        )
 }

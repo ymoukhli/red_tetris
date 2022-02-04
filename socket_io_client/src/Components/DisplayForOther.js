@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import DisplayCard from "./DisplayCard";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { bindActionCreators } from "redux";
-import { action } from "../redux/actions";
+import { useSelector } from "react-redux";
 
 const StyledDisplayForOther = styled.div`
     width: 100%;

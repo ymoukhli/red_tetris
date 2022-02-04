@@ -5,10 +5,10 @@ import grids from './reducers/setGrids';
 import multiPlayers from './reducers/multiPlayers';
 import socket from './reducers/socket';
 import started from './reducers/start';
-import room from './reducers/setRoom';
+import userInfo from './reducers/userInfo';
 import roomName from './reducers/setRoomName';
 import userID from './reducers/setUserID';
-
+import tetrminosQueue from "./reducers/tetriminosQueue"
 
 
 const reducers = combineReducers({
@@ -18,9 +18,10 @@ const reducers = combineReducers({
     multiPlayers,
     socket,
     started,
-    room,
     roomName,
-    userID
+    userID,
+    tetrminosQueue,
+    userInfo
 })
 
 export default reducers;

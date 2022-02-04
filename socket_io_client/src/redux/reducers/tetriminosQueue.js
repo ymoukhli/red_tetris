@@ -1,9 +1,9 @@
 import * as actionType from "../actionTypes"
 
-const reducer = (state = {}, action) => {
+const reducer = (state = [], action) => {
     switch (action.type) {
-        case actionType.ROOM:
-            return action.payload;
+        case actionType.UPDATEQUEUE:
+            return action.payload.slice(0,4);
         default:
             return state;
     }

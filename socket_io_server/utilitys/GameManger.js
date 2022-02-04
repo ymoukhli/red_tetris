@@ -60,8 +60,8 @@ const GameManager = class {
                 username: this.username,
                 user_id: this.id
             })
-            io.to(this.id).emit("display", tetrArray.slice(this.tetrArrayIndexer + 1));
             this.tetrArrayIndexer += 1;
+            io.to(this.id).emit("display", tetrArray.slice(this.tetrArrayIndexer + 1));
             this.Player = new Player(tetrArray[this.tetrArrayIndexer]);
         }
 

@@ -53,13 +53,26 @@ export function setRoomName(room)
     }
 }
 
-export function setRoom(room)
+export function updateUserInfo(data)
 {
     return (dispatch) => {
-        dispatch({ type: actions.ROOM, payload: room})
+        dispatch({ type: actions.UPDATEUSERINFO, payload: data})
     }
 }
 
+export function removeUserInfo(data)
+{
+    return (dispatch) => {
+        dispatch({ type: actions.REMOVEUSERINFO, payload: data})
+    }
+}
+
+export function addUserInfo(data)
+{
+    return (dispatch) => {
+        dispatch({ type: actions.ADDUSERINFO, payload: data})
+    }
+}
 
 export function setUserID(id)
 {
@@ -68,6 +81,13 @@ export function setUserID(id)
     }
 }
 
+
+export function updateQueue(data)
+{
+    return (dispatch) => {
+        dispatch({ type: actions.UPDATEQUEUE, payload: data})
+    }
+}
 
 export function setStarted(boolean)
 {

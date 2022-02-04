@@ -1,23 +1,25 @@
 import * as actionType from "../actionTypes"
+import produce from "immer"
 
 const reducer = (state = {}, action) => {
-        let tmp = {}
     switch (action.type) {
 
         case actionType.ADDGRID:
-         tmp = {...state};
+        const tmp = {};
         for (const [key, value] of Object.entries(action.payload.users)) {
           if (key !== action.payload.userID) tmp[value.username] = value.Grid.playground;
         }
         return tmp;
       case actionType.UPDATEGRID:
-         tmp = {...state};
-        if (tmp[action.payload.username]) tmp[action.payload.username] = action.payload.playground;
-        return tmp;
+         return produce(state, draft => {
+           if (draft[action.payload.username])
+           draft[action.payload.username] = action.payload.playground;
+
+         })
       case  actionType.REMOVEGRID:
-         tmp  = {...state};
-        delete tmp[action.payload];
-        return tmp;
+        return produce(state, draft => {
+          delete draft[action.payload];
+        })
       default:
         return state;
     }

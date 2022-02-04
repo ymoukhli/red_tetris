@@ -1,6 +1,3 @@
-import { useSelector } from "react-redux";
-import { removeGrid } from "./redux/actions/actions";
-import * as actionType from "./redux/actionTypes";
 
 export default function Socket(io, ac, state,userID) {
 
@@ -8,17 +5,16 @@ export default function Socket(io, ac, state,userID) {
         setSocket,
         setMultiplayer,
         setGrid,
-        setRoom,
+        addUserInfo,
         setStarted,
         removeGrid,
         updateGrid,
-        addGrid
+        addGrid,
+        updateUserInfo,
+        removeUserInfo,
+        updateQueue
     } = ac;
 
-    const {
-        grids,
-        room
-    } = state;
     setSocket(io);
 
     io.on("started", () => {
@@ -27,28 +23,24 @@ export default function Socket(io, ac, state,userID) {
     io.on("respond", (data) => {
         setGrid(data.playground);
     });
-    io.on("joined", ({ users }) => {
-        const tmp = {};
-        console.log("USER", users);
+    io.on("joined", ({ users, tetriminosQueue }) => {
         addGrid({users, userID});
-        setRoom(users)
+        addUserInfo({users})
+        updateQueue(tetriminosQueue)
     });
   
     io.on("left", ({ username, userID }) => {
         removeGrid({userID});
 
-        setRoom(() => {
-            const tmp = { ...room };
-            delete tmp[userID];
-            return tmp;
-            });
+       removeUserInfo(username);
     });
-
-    io.on("collided", ({ playground, username, score, lines, user_id }) => {
-        updateGrid({username, playground});
-        // tmp[user_id].score = score;
-        // tmp[user_id].lines = lines; 
-        // setRoom(tmp);
+    
+    io.on("display", (arr) => {
+        updateQueue(arr);
+    })
+    io.on("collided", ({ playground, username, score, lines }) => {
+        updateGrid({username, playground})
+        updateUserInfo({username, score, lines});
     });
 
     io.on("multy", () => {

@@ -33,7 +33,7 @@ const Rooms = class {
   };
 
   startGame(room) {
-    io.to(room).emit("display",this.data[room].genaratedTetros);
+    // io.to(room).emit("display",this.data[room].genaratedTetros);
     this.data[room].interval = setInterval(() => {
       for (const [key, value] of Object.entries(this.data[room].players)) {
         console.log(`${key}: ${value}`);

@@ -16,7 +16,7 @@ router.get("/:room/:playerName/:userID", (req, res) => {
     console.log(Rooms.data[room]);
     console.log("-------------");
 
-    res.send({ room, response: "Hello there !" }).status(200);
+    res.send({ data: Rooms.data[room].genaratedTetros, response: "Hello there !" }).status(200);
   }
 });
 
