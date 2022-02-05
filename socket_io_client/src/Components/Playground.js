@@ -2,6 +2,8 @@ import React from "react";
 import { dimenssion } from "../Utilitys/generateGrid";
 import Cell from "./Cell";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+
 
 // position: absolute;
 export const StyledPlayground = styled.div`
@@ -14,8 +16,10 @@ export const StyledPlayground = styled.div`
     grid-template-columns: repeat(${props => props.width}, 25px);
 `
 
-export default function Playground({grid})
+export default function Playground()
 {
+    const grid = useSelector(state => state.grid);
+
     return (
         <StyledPlayground height={dimenssion.height} width={dimenssion.width}>
             {grid.map(x => x.map((y,i) => <Cell

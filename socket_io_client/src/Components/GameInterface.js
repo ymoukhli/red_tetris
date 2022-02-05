@@ -25,11 +25,10 @@ export default function GameInterface() {
   const dispatch = useDispatch();
   const ac = bindActionCreators(action, dispatch);
   const { join , setRoomName, setUserID} = ac;
-  const state = useSelector(state => state)
-  const {joined, socket, userID, started} = state;
-    const reset = () => {
-      io.emit("start");
-    }
+  const joined = useSelector(state => state.joined)
+  const socket = useSelector(state => state.socket)
+  const userID = useSelector(state => state.userID)
+  const started = useSelector(state => state.started)
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -49,24 +48,37 @@ export default function GameInterface() {
             sockets.emit("joinRoom", e.target.room.value);
             join(true);
             setRoomName(e.target.room.value);
-            initSocket(sockets, ac, state, tmpUserID);
+            initSocket(sockets, ac, tmpUserID);
           })
           .catch((err) => {
             console.log(err);
           });
       };
-
+      const move = ({key}) =>
+      {
+          if (!joined || !started) return ;
+          if (key ==="ArrowRight" || key === "d")
+              socket.emit("move", {x: 1, y: 0});
+          else if (key === "ArrowLeft" || key === "a")
+              socket.emit("move", {x: -1, y: 0});
+          else if (key === "ArrowDown" || key === "s")
+              socket.emit("move", {x: 0, y: 1});
+          else if (key === "ArrowUp" || key === "w")
+              socket.emit("rotate", {x: 30, y: { y1: 10, y2: 20}})
+          else if (key === "")
+              socket.emit("end");
+      }
 
 
     return (
-    <StyledGameInterfaceWrapper>
+    <StyledGameInterfaceWrapper onKeyDown={e => move(e)} tabIndex="-1">
         
         {!joined && <JoinGame handleSubmit={handleSubmit}></JoinGame>}
 
         {joined && <StyledGameInterface>
             <React.StrictMode>
 
-            <Nav io={socket} reset={reset} started={started}></Nav>
+            <Nav io={socket} started={started}></Nav>
             <StyledWrapper>
                 <MasterDisplay io={socket}></MasterDisplay>
                 <DisplayForOther io={socket} user_id={userID}></DisplayForOther>

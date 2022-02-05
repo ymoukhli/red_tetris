@@ -17,7 +17,8 @@ export const StyledDisplay = styled.div`
 
 export default function Display()
 {
-    const { tetrminosQueue , started }  = useSelector(state => state);
+    const tetrminosQueue = useSelector(state => state.tetrminosQueue);
+    const started = useSelector(state => state.started);
         let tetriminos = [];
         if (started){
             tetriminos = tetrminosQueue.map(e => {

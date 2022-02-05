@@ -16,9 +16,12 @@ const StyledStart = styled.button`
 `
 
 
-export default function Nav({ io ,started})
+export default function Nav()
 {
-    const { userInfo, roomName} = useSelector(state => state)
+    const userInfo = useSelector(state => state.userInfo)
+    const roomName = useSelector(state => state.roomName)
+    const started = useSelector(state => state.started)
+    const io = useSelector(state => state.socket)
 
     const reset = () => {
       if (roomName && !started) {
@@ -37,7 +40,7 @@ export default function Nav({ io ,started})
   
     
     const users = userInfo.map((x) => <InfoCard username={x.username} score={x.score} lines={x.lines}></InfoCard>);
-
+    console.log("rerender nav")
     return (<StyledNav>
         <StyledStart onClick={reset} room>start</StyledStart>
         {users}

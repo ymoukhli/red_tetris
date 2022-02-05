@@ -15,7 +15,8 @@ const StyledDisplayForOther = styled.div`
 
 export default function DisplayForOther() {
 
-    const { multiPlayers , grids} = useSelector(state => state);
+    const multiPlayers = useSelector(state => state.multiPlayers);
+    const grids = useSelector(state => state.grids);
     const display = Object.values(grids).map((grid, i) => <DisplayCard key={i} grid={grid}></DisplayCard>)
 
     return (
