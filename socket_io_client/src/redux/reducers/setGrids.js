@@ -7,6 +7,7 @@ const reducer = (state = {}, action) => {
         case actionType.ADDGRID:
         const tmp = {};
         for (const [key, value] of Object.entries(action.payload.users)) {
+          console.log(action.payload.userID,"||||", key)
           if (key !== action.payload.userID) tmp[value.username] = value.Grid.playground;
         }
         return tmp;

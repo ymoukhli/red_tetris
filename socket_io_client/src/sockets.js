@@ -1,5 +1,5 @@
 
-export default function Socket(io, ac, state,userID) {
+export default function Socket(io, ac,userID) {
 
     const {
         setSocket,
@@ -16,7 +16,7 @@ export default function Socket(io, ac, state,userID) {
     } = ac;
 
     setSocket(io);
-
+    
     io.on("started", () => {
         setStarted(true);
     });
@@ -24,6 +24,7 @@ export default function Socket(io, ac, state,userID) {
         setGrid(data.playground);
     });
     io.on("joined", ({ users, tetriminosQueue }) => {
+        console.log("USER ID ", userID);
         addGrid({users, userID});
         addUserInfo({users})
         updateQueue(tetriminosQueue)

@@ -1,6 +1,6 @@
 import * as actionType from "../actionTypes"
 
-const reducer = (state = null, action) => {
+const reducer = (state = "", action) => {
     switch (action.type) {
         case actionType.USERID:
             return action.payload;

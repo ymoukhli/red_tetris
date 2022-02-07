@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 
 const StyledMasterDisplay = styled.div`
     display: flex;
+    justify-content: center;
     width: 50vw;
     min-width: 400px;
 `

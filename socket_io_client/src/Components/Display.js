@@ -9,9 +9,10 @@ export const StyledDisplay = styled.div`
     height: 500px;
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
     align-items: center;
-    gap: 12px;
-    padding-top: 12px;
+    // gap: 12px;
+    // padding-top: 12px;
     background-color: #655D8A; 
 `
 
