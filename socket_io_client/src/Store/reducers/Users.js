@@ -6,7 +6,6 @@ const Users = (state = data, action) => {
   let tmp = {};
   switch (action.type) {
     case "ADD_USERS":
-      console.log("ADD_USERS");
       for (const [key, value] of Object.entries(action.payload.users)) {
         if (key !== action.payload.userID) {
           tmp[value.id] = {
@@ -22,7 +21,6 @@ const Users = (state = data, action) => {
         users: tmp,
       };
     case "UPDATE_USERS":
-      console.log("UPDATE_USERS");
       tmp = state.users;
       if (tmp[action.payload.userID])
         tmp[action.payload.userID] = {
@@ -34,7 +32,6 @@ const Users = (state = data, action) => {
         users: tmp,
       };
     case "REMOVE_USERS":
-      console.log("REMOVE_USERS");
       tmp = state.users;
       delete tmp[action.payload];
       return {

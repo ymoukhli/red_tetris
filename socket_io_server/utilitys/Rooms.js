@@ -31,12 +31,31 @@ const Rooms = class {
       return true;
     }
   };
-
+  endGame(room) {
+    for (const [key, value] of Object.entries(this.data[room].players)) {
+      if (!value.gameOver) io.to(key).emit("win");
+    }
+  }
   startGame(room) {
     io.to(room).emit("display", this.data[room].genaratedTetros);
+     for (const [key, value] of Object.entries(this.data[room].players)) {
+        value.gameOver = false;
+      }
+    
     this.data[room].interval = setInterval(() => {
+      let count = 0;
+      const plen = Object.keys(this.data[room].players).length;
       for (const [key, value] of Object.entries(this.data[room].players)) {
-        console.log(`${key}: ${value}`);
+        if (value.gameOver) count++;
+        if (plen > 1 && plen - count <= 1)
+        {
+          clearInterval(this.data[room].interval);
+          this.endGame(room);
+        }
+        else if (plen == 1 && plen - count <= 0)
+        {
+          clearInterval(this.data[room].interval);
+        }
         value.move(0, 1, room, this.data[room].genaratedTetros);
         io.to(key).emit("respond", value.Grid);
       }

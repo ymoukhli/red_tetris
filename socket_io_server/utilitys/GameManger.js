@@ -1,6 +1,5 @@
 const { Grid } = require("./Grid");
 const { Player } = require("./Player");
-const { getRandomTetri } = require("./tetrimino");
 const { checkLineInGrid, generateTetros } = require("./utilitys")
 const GameManager = class {
 
@@ -9,6 +8,7 @@ const GameManager = class {
     {
         this.id = user_id
         this.Grid = new Grid(10, 20)
+        this.gameOver = false;
         this.lines = 0;
         this.score = 0;
         this.room = room;
@@ -60,6 +60,11 @@ const GameManager = class {
             
             io.to(this.id).emit("display", tetrArray.slice(this.tetrArrayIndexer + 1));
             this.Player = new Player(tetrArray[this.tetrArrayIndexer]);
+            if (this.Player.checkColision(this.Grid,0,0))
+            {
+                this.gameOver = true;
+                io.to(this.id).emit("gameOver");
+            }
         }
 
         // ---------- > delete line if any < --------//
@@ -71,6 +76,7 @@ const GameManager = class {
 
     move = (x = 0, y = 1, room = null, tetrArray = []) => {
         console.log('from room', room);
+        if (this.gameOver) return;
         if (this.Player.updatePlayerPos(x, y, this.Grid))
         {
             this.Grid.playground = this.updateGrid(tetrArray);
@@ -88,6 +94,7 @@ const GameManager = class {
 
     rotate = (tetrArray) => {
 
+        if (this.gameOver) return;
         if (this.Player.rotatePlayer(0,0,this.Grid))
         {
             this.Grid.playground = this.updateGrid(tetrArray);

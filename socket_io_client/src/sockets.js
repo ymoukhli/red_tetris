@@ -39,7 +39,15 @@ export const Sockets = ({ socket, userID, room, data, dispatch }) => {
     });
     
     socket.on("display", (data) => {
-      dispatch(UpdateTetriminosQueue(data))
+      dispatch(UpdateTetriminosQueue(data));
+    })
+
+    socket.on("gameOver", () => {
+      console.log("GAMEOVER BABY !!")
+    })
+
+    socket.on("win", () => {
+      console.log("JE SUIS SUPER, BABY !! WIN")
     })
     /////////////////////////
 

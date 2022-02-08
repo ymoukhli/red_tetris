@@ -19,7 +19,6 @@ export default function Display()
     const tetrminosQueue = useSelector(state => state.GameInterface.display);
     const started = useSelector(state => state.Nav.GameStart);
         let tetriminos = [];
-        console.log("tetroos", tetrminosQueue)
         if (started){
             tetriminos = tetrminosQueue.map(e => {
                 const Component = Shape[e];
