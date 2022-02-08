@@ -7,7 +7,6 @@ export const connectUser = (message) => {
 
 //#region GI
 export const SetGameInterface = (data) => {
-  console.log('SetGameInterface', data);
   return {
     type: "SET_DATA",
     payload: data,
@@ -17,6 +16,14 @@ export const SetGrid = (data) => {
   return {
     type: "SET_GRID",
     payload: data,
+  };
+};
+
+export const UpdateTetriminosQueue = (data) => {
+  console.log("SET_TETRO")
+  return {
+    type: "SET_TETRO",
+    payload: data
   };
 };
 //#endregion

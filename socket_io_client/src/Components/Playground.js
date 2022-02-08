@@ -3,6 +3,7 @@ import { StyledPlayground } from "../Styles/StyledPlayground";
 import Cell from "./Cell";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import Display from "./Display";
 
 export default function Playground({ grid, master }) {
   return (
@@ -14,11 +15,7 @@ export default function Playground({ grid, master }) {
           </StyledPlayground>
         </Grid>
         <Grid item lg={2}>
-        <div>test</div>
-        <div>test</div>
-        <div>test</div>
-        <div>test</div>
-        <div>test</div>
+        <Display></Display>
         </Grid>
       </Grid>
     </Stack>

@@ -35,7 +35,7 @@ const RandomTetros = (nb) => {
     tetroList.push(tetriminos[Math.floor(Math.random() * tetriminos.length)]);
   }
   return tetroList;
-};
+}
 
 function checkPlayersExist(players, username) {
   const res = Object.values(players).filter((element) => {

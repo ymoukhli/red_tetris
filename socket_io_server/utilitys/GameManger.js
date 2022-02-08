@@ -57,7 +57,8 @@ const GameManager = class {
             })
 
             this.tetrArrayIndexer += 1;
-            console.log("GAME MANAGER ::: TETRIMINOS ARRAY: ", tetrArray, tetrArray.length, this.tetrArrayIndexer);
+            
+            io.to(this.id).emit("display", tetrArray.slice(this.tetrArrayIndexer + 1));
             this.Player = new Player(tetrArray[this.tetrArrayIndexer]);
         }
 

@@ -5,6 +5,7 @@ import {
   AddUsersGrid,
   UpdateUsersGrid,
   RemoveUserGrid,
+  UpdateTetriminosQueue
 } from "./Store/actions";
 
 export const Sockets = ({ socket, userID, room, data, dispatch }) => {
@@ -36,6 +37,10 @@ export const Sockets = ({ socket, userID, room, data, dispatch }) => {
       console.log(`emit, left`);
       dispatch(RemoveUserGrid(userID));
     });
+    
+    socket.on("display", (data) => {
+      dispatch(UpdateTetriminosQueue(data))
+    })
     /////////////////////////
 
   return socket;
