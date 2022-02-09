@@ -57,7 +57,7 @@ module.exports = {
           }
           playerGM.genaratedTetros = roomObj.genaratedTetros;
 
-          socket.emit("respond", playerGM.Grid);
+          socket.emit("respond", { Grid: playerGM.Grid, score: playerGM.score, lines: playerGM.lines });
         }
       });
 
@@ -65,7 +65,7 @@ module.exports = {
 
       socket.on("rotate", () => {
         if (playerGM.rotate(roomObj.genaratedTetros)) {
-          socket.emit("respond", playerGM.Grid);
+          socket.emit("respond", { Grid: playerGM.Grid, score: playerGM.score, lines: playerGM.lines });
         }
       });
       //#endregion

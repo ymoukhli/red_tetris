@@ -57,7 +57,7 @@ const Rooms = class {
           clearInterval(this.data[room].interval);
         }
         value.move(0, 1, room, this.data[room].genaratedTetros);
-        io.to(key).emit("respond", value.Grid);
+        io.to(key).emit("respond", {Grid :value.Grid, score: value.score, lines: value.lines});
       }
     }, 1000);
   }
