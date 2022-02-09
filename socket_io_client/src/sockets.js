@@ -14,7 +14,7 @@ export const Sockets = ({ socket, userID, room, data, dispatch }) => {
     
     ////////////////////
     socket.on("respond", (data) => {
-      dispatch(SetGrid(data.playground));
+      dispatch(SetGrid(data));
     });
 
     socket.on("GStart", () => {

@@ -1,8 +1,8 @@
 import Playground from "./Playground";
 
 
-export default function DisplayCard({grid}) {
+export default function DisplayCard({grid, score, lines}) {
     return (
-        <Playground grid={grid}></Playground>
+        <Playground grid={grid} score={score} lines={lines}></Playground>
     )
 }

@@ -10,20 +10,21 @@ import { StartGame } from "../Store/actions";
 export default function Nav() {
   //#region redux
 
-  const {GameInterface, Users} = useSelector(state => state);
+  const roomName = useSelector(state => state.GameInterface.roomName);
+  const sockets = useSelector((state) => state.GameInterface.sockets);
 
   const dispatch = useDispatch();
   //#endregion
 
   const reset = () => {
-    if (GameInterface.roomName) {
-      GameInterface.sockets.emit("GameStarter", GameInterface.roomName, (data) => {
+    if (roomName) {
+      sockets.emit("GameStarter", roomName, (data) => {
         if (typeof data == "string") {
           console.log("issue", data);
           dispatch(StartGame({ type: "error", message: data }));
         } else {
           console.log("passed game start");
-          GameInterface.sockets.emit("startGame", GameInterface.roomName);
+          sockets.emit("startGame", roomName);
         }
       });
     } else {

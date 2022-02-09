@@ -16,13 +16,13 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function DisplayForOther() {
   //#region redux
 
-  const users = useSelector((state) => state.Users.users);
+  const data = useSelector((state) => state.Users);
   //#endregion
 
-  const display = Object.values(users).map((user, index) => (
+  const display = Object.values(data.users).map((user, index) => (
     <Grid item lg={"auto"}>
       <Item>
-        <DisplayCard key={index} grid={user.grid}></DisplayCard>
+        <DisplayCard key={index} grid={user.grid} score={user.score} lines={user.lines}></DisplayCard>
       </Item>
     </Grid>
   ));

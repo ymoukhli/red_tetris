@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Display from "./Display";
 
-export default function Playground({ grid, master }) {
+export default function Playground({ grid, master, score, lines, username }) {
   return (
     <Stack direction={{ xs: "column", sm: "row" }} justifyContent="start" alignItems="center">
       <Grid container spacing={2} justifyContent="center" alignItems="center">

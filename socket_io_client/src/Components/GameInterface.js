@@ -29,7 +29,10 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function GameInterface() {
   //#region redux
 
-  const {GameInterface, Nav} = useSelector(state => state);
+  const alert = useSelector((state) => state.Nav.alert);
+  const GameStart = useSelector((state) => state.Nav.GameStart);
+  const joined = useSelector((state) => state.GameInterface.joined);
+  const sockets = useSelector((state) => state.GameInterface.sockets);
  
   const dispatch = useDispatch();
 
@@ -59,15 +62,15 @@ export default function GameInterface() {
   };
 
   const move = ({ key }) => {
-    if (GameInterface.joined && Nav.GameStart) {
+    if (joined && GameStart) {
       if (key === "ArrowRight" || key === "d") {
-        GameInterface.sockets.emit("move", { x: 1, y: 0 });
+        sockets.emit("move", { x: 1, y: 0 });
       } else if (key === "ArrowLeft" || key === "a") {
-        GameInterface.sockets.emit("move", { x: -1, y: 0 });
+        sockets.emit("move", { x: -1, y: 0 });
       } else if (key === "ArrowDown" || key === "s") {
-        GameInterface.sockets.emit("move", { x: 0, y: 1 });
+        sockets.emit("move", { x: 0, y: 1 });
       } else if (key === "ArrowUp" || key === "w") {
-        GameInterface.sockets.emit("rotate");
+        sockets.emit("rotate");
       }
     }
   };
@@ -75,17 +78,17 @@ export default function GameInterface() {
   return (
     <React.Fragment>
       <Box>
-        {!GameInterface.joined && GameInterface.sockets && <JoinGame handleSubmit={handleSubmit}></JoinGame>}
+        {!joined && sockets && <JoinGame handleSubmit={handleSubmit}></JoinGame>}
 
-        {GameInterface.joined && GameInterface.sockets && (
+        {joined && sockets && (
           <Box onKeyDown={(e) => move(e)} tabIndex="-1">
             <Navigator></Navigator>
-            {Nav.alert.show ? (
+            {alert.show ? (
               <StyledNotification>
                 <div id="notif" className="visible">
-                  <Alert severity={Nav.alert.type} className="alert">
+                  <Alert severity={alert.type} className="alert">
                     <AlertTitle>
-                      <strong>{Nav.alert.message}</strong>
+                      <strong>{alert.message}</strong>
                     </AlertTitle>
                   </Alert>
                 </div>
