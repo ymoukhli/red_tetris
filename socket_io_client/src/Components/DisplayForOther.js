@@ -1,8 +1,6 @@
 import React from "react";
 import DisplayCard from "./DisplayCard";
-import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 
@@ -20,17 +18,9 @@ export default function DisplayForOther() {
   //#endregion
 
   const display = Object.values(data.users).map((user, index) => (
-    <Grid item lg={"auto"}>
-      <Item>
-        <DisplayCard key={index} grid={user.grid} score={user.score} lines={user.lines}></DisplayCard>
-      </Item>
-    </Grid>
+    <Item>
+      <DisplayCard key={index} grid={user.grid} score={user.score} lines={user.lines}></DisplayCard>
+    </Item>
   ));
-  return (
-    <Stack style={{ flexWrap: "wrap", placeContent: "center" }} direction={{ xs: "column", sm: "row" }} justifyContent="start" alignItems="center">
-      <Grid style={{ placeContent: "center" }} container spacing={2} justifyContent="center" alignItems="center">
-        {display}
-      </Grid>
-    </Stack>
-  );
+  return <div> {display} </div>;
 }

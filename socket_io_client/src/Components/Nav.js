@@ -10,7 +10,7 @@ import { StartGame } from "../Store/actions";
 export default function Nav() {
   //#region redux
 
-  const roomName = useSelector(state => state.GameInterface.roomName);
+  const roomName = useSelector((state) => state.GameInterface.roomName);
   const sockets = useSelector((state) => state.GameInterface.sockets);
 
   const dispatch = useDispatch();
@@ -33,9 +33,9 @@ export default function Nav() {
   };
 
   return (
-    <AppBar position="fixed" color="primary" sx={{ top: 0, bottom: "auto" }}>
+    <AppBar position="fixed" color="primary" sx={{ top: 'auto', top: 0 }}>
       <Toolbar>
-        <Typography variant="h5" gutterBottom component="div" sx={{ p: 2, pb: 0 }}>
+        <Typography variant="h6" component="div">
           Red tetris
         </Typography>
         <Box sx={{ flexGrow: 1 }} />

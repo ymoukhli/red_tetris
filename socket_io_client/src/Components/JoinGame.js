@@ -4,14 +4,43 @@ import Button from "./Button";
 import Container from "@mui/material/Container";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import { useSelector } from "react-redux";
+import { Sockets } from "../sockets";
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+import io from "socket.io-client";
+import { useSelector, useDispatch } from "react-redux";
+import { connectUser } from "../Store/actions";
 
-export default function JoinGame({ handleSubmit }) {
+export default function JoinGame() {
   //#region redux
 
   const joinGame = useSelector((state) => state.joinGame);
 
+  const dispatch = useDispatch();
   //#endregion
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const userID = uuidv4();
+    axios
+      .get(`http://localhost:4001/rooms/${e.target.room.value}/${e.target.username.value}/${userID}`)
+      .then((response) => {
+        const ENDPOINT = "http://127.0.0.1:4001/";
+        const options = {
+          query: {
+            userId: userID,
+            room: e.target.room.value,
+          },
+        };
+        const socket = io(ENDPOINT, options);
+
+        Sockets({ socket, userID, room: e.target.room.value, data: response.data.data, dispatch });
+      })
+      .catch((err) => {
+        dispatch(connectUser(err.response.data.response || err.response.data || err.response));
+        console.log(err.response);
+      });
+  };
 
   return (
     <React.Fragment>

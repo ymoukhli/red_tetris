@@ -10,12 +10,13 @@ export default function MasterDisplay() {
   const grid = useSelector((state) => state.GameInterface.grid);
   const score = useSelector((state) => state.GameInterface.score);
   const lines = useSelector((state) => state.GameInterface.lines);
+  const username = useSelector((state) => state.GameInterface.data.username);
 
   //#endregion
 
   return (
     <StyledMasterDisplay>
-      <Playground grid={grid} master score={score} lines={lines}></Playground>
+      <Playground grid={grid} master score={score} lines={lines} username={username}></Playground>
     </StyledMasterDisplay>
   );
 }
