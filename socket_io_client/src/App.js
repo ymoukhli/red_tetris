@@ -1,21 +1,24 @@
 import * as React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Nav from "./Components/Nav";
+import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import MasterDisplay from "./Components/MasterDisplay";
-import DisplayForOther from "./Components/DisplayForOther";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Nav from "./Components/Nav";
+import MasterBoard from "./Components/Board/MasterBoard";
+import OthersBoard from "./Components/Board/OthersBoard";
 import Display from "./Components/Display";
 import JoinGame from "./Components/JoinGame";
 import { useSelector } from "react-redux";
 
-function App() {
+const theme = createTheme();
+
+export default function Checkout() {
   //#region redux
 
   const joined = useSelector((state) => state.GameInterface.joined);
   const sockets = useSelector((state) => state.GameInterface.sockets);
   const GameStart = useSelector((state) => state.Nav.GameStart);
+  const joindUsersd = useSelector((state) => Object.keys(state.Users.users).length);
 
   //#endregion
 
@@ -32,32 +35,62 @@ function App() {
       }
     }
   };
+
   return (
-    <React.Fragment>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container>
-        <Box>
+      {!joined && sockets && <JoinGame></JoinGame>}
+      {joined && sockets && (
+        <div>
           <Nav></Nav>
-        </Box>
-        {!joined && sockets && <JoinGame></JoinGame>}
-        {joined && sockets && (
-          <Box onKeyDown={(e) => move(e)} tabIndex="-1">
-            <Grid container spacing={3} justifyContent="space-evenly" alignItems="center">
-              <Grid item xs>
-                <Display></Display>
+          <Paper variant="outlined" sx={{ my: { xs: 7, md: 6 }, p: { xs: 2, md: 3 }, mb: 4 }}>
+            <React.Fragment>
+              <Grid
+                container
+                component="main"
+                sx={{ height: "89vh" }}
+                onKeyDown={(e) => move(e)}
+                tabIndex="-1"
+                justifyContent="space-around"
+                alignItems="center"
+              >
+                <CssBaseline />
+
+                <Grid item xs={false} sm={4} md={6} style={{ alignSelf: "center" }}>
+                  {GameStart && (
+                    <Grid container justifyContent="center" alignItems="center" style={{ textAlign: "-webkit-center" }}>
+                      <Grid item lg={12} md={12} sm={12} xs={12}>
+                        <Display></Display>
+                      </Grid>
+                    </Grid>
+                  )}
+                  <Grid container spacing={1} justifyContent="space-around" alignItems="center">
+                    <Grid item lg={10} md={10} sm={12} xs={10}>
+                      <MasterBoard></MasterBoard>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                {joindUsersd ? (
+                  <Grid
+                    style={{ maxHeight: "90vh", overflow: "auto", alignSelf: "center" }}
+                    item
+                    xs={12}
+                    sm={8}
+                    md={6}
+                    component={Paper}
+                    elevation={2}
+                    square
+                  >
+                    <OthersBoard></OthersBoard>
+                  </Grid>
+                ) : (
+                  ""
+                )}
               </Grid>
-              <Grid item xs={6}>
-                <MasterDisplay></MasterDisplay>
-              </Grid>
-              <Grid item xs>
-                <DisplayForOther></DisplayForOther>
-              </Grid>
-            </Grid>
-          </Box>
-        )}
-      </Container>
-    </React.Fragment>
+            </React.Fragment>
+          </Paper>
+        </div>
+      )}
+    </ThemeProvider>
   );
 }
-
-export default App;

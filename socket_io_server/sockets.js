@@ -31,6 +31,7 @@ module.exports = {
         io.to(name_room).emit("joined", {
           room: name_room,
           users: roomObj.players,
+          master: roomObj.host == userID
         });
       });
       //#endregion

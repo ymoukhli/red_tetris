@@ -33,12 +33,19 @@ export default function Nav() {
   };
 
   return (
-    <AppBar position="fixed" color="primary" sx={{ top: 'auto', top: 0 }}>
+    <AppBar position="fixed" color="primary" sx={{ bottom: "auto", top: 0 }}>
       <Toolbar>
         <Typography variant="h6" component="div">
           Red tetris
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
+        {roomName ? (
+          <Typography variant="h6" component="div">
+            Room: {roomName}
+          </Typography>
+        ) : (
+          ""
+        )}
         <Box sx={{ flexGrow: 1 }} />
         <Button color="inherit" variant="contained" onClick={reset}>
           <span style={{ color: "black", fontWeight: "bold" }}>Start</span>

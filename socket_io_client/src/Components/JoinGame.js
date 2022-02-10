@@ -1,8 +1,8 @@
 import React from "react";
-import { StyledJoinGame, Wrap } from "../Styles/StyledJoinGame";
+import { StyledJoinGame} from "../Styles/StyledJoinGame";
 import Button from "./Button";
-import Container from "@mui/material/Container";
 import Alert from "@mui/material/Alert";
+import Grid from "@mui/material/Grid";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Sockets } from "../sockets";
 import { v4 as uuidv4 } from "uuid";
@@ -10,6 +10,7 @@ import axios from "axios";
 import io from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
 import { connectUser } from "../Store/actions";
+import CssBaseline from "@mui/material/CssBaseline";
 
 export default function JoinGame() {
   //#region redux
@@ -44,8 +45,9 @@ export default function JoinGame() {
 
   return (
     <React.Fragment>
-      <Wrap>
-        <Container className="container" fixed>
+      <CssBaseline />
+      <Grid container sx={{ height: "90vh" }} justifyContent="space-around" alignItems="center">
+        <Grid item xs={false}>
           {joinGame.alert.value ? (
             <Alert severity="error" className="alert">
               <AlertTitle>Error</AlertTitle>
@@ -54,7 +56,6 @@ export default function JoinGame() {
           ) : (
             ""
           )}
-
           <StyledJoinGame>
             {
               <div className="login-form">
@@ -77,8 +78,8 @@ export default function JoinGame() {
               </div>
             }
           </StyledJoinGame>
-        </Container>
-      </Wrap>
+        </Grid>
+      </Grid>
     </React.Fragment>
   );
 }
