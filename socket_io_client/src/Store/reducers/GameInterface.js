@@ -8,6 +8,7 @@ const data = {
   lines: 0,
   grid: [],
   display: [],
+  gameOver: false
 };
 
 const GameInterface = (state = data, action) => {
@@ -36,6 +37,11 @@ const GameInterface = (state = data, action) => {
         score: action.payload.score,
         lines: action.payload.lines,
       };
+    case "SET_GAMEOVER":
+      return{
+        ...state,
+        gameOver: true
+      }
     default:
       return state;
   }

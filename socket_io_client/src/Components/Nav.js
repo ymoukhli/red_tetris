@@ -12,12 +12,18 @@ export default function Nav() {
 
   const roomName = useSelector((state) => state.GameInterface.roomName);
   const sockets = useSelector((state) => state.GameInterface.sockets);
+  const GameStart = useSelector((state) => state.Nav.GameStart);
 
   const dispatch = useDispatch();
   //#endregion
 
   const reset = () => {
+    if (GameStart){
+      console.log('Game already started');
+      return
+    }
     if (roomName) {
+      console.log('in');
       sockets.emit("GameStarter", roomName, (data) => {
         if (typeof data == "string") {
           console.log("issue", data);

@@ -27,10 +27,10 @@ export default function Display() {
   const started = useSelector((state) => state.Nav.GameStart);
   let tetriminos = [];
   if (started) {
-    tetriminos = tetrminosQueue.map((e) => {
+    tetriminos = tetrminosQueue.map((e, index) => {
       const Component = Shape[e];
       return (
-        <Item>
+        <Item  key={index}>
           <Component />
         </Item>
       );

@@ -5,7 +5,8 @@ import {
   AddUsersGrid,
   UpdateUsersGrid,
   RemoveUserGrid,
-  UpdateTetriminosQueue
+  UpdateTetriminosQueue,
+  GameOver,
 } from "./Store/actions";
 
 export const Sockets = ({ socket, userID, room, data, dispatch }) => {
@@ -44,6 +45,7 @@ export const Sockets = ({ socket, userID, room, data, dispatch }) => {
 
     socket.on("gameOver", () => {
       console.log("GAMEOVER BABY !!")
+      dispatch(GameOver());
     })
 
     socket.on("win", () => {

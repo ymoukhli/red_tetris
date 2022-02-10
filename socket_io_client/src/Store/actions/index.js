@@ -26,6 +26,15 @@ export const UpdateTetriminosQueue = (data) => {
     payload: data
   };
 };
+
+export const GameOver = (data) => {
+  console.log("SET_GAMEOVER")
+  return {
+    type: "SET_GAMEOVER",
+    payload: data
+  };
+};
+
 //#endregion
 
 //#region NAV

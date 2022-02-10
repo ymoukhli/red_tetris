@@ -16,6 +16,7 @@ export default function Checkout() {
   //#region redux
 
   const joined = useSelector((state) => state.GameInterface.joined);
+  const gameOver = useSelector((state) => state.GameInterface.gameOver);
   const sockets = useSelector((state) => state.GameInterface.sockets);
   const GameStart = useSelector((state) => state.Nav.GameStart);
   const joindUsersd = useSelector((state) => Object.keys(state.Users.users).length);
@@ -23,7 +24,7 @@ export default function Checkout() {
   //#endregion
 
   const move = ({ key }) => {
-    if (joined && GameStart) {
+    if (joined && GameStart && !gameOver) {
       if (key === "ArrowRight" || key === "d") {
         sockets.emit("move", { x: 1, y: 0 });
       } else if (key === "ArrowLeft" || key === "a") {

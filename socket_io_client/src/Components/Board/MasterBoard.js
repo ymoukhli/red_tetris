@@ -15,7 +15,6 @@ export default function MasterBoard() {
   const username = useSelector((state) => state.GameInterface.data.username);
 
   //#endregion
-  console.log({ grid, score, lines, username });
   return (
     <Stack direction={{ xs: "column", sm: "row" }} justifyContent="start" alignItems="center">
       <Grid container spacing={2} justifyContent="center" alignItems="center">
