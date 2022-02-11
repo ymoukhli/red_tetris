@@ -1,10 +1,5 @@
 import React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-// import {AppBar, Box, Toolbar, Typography, Button} "@mui/material";
+import { AppBar, Box, Toolbar, Typography, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { StartGame } from "../Store/actions";
 
@@ -20,13 +15,24 @@ export default function Nav() {
   const dispatch = useDispatch();
   //#endregion
 
+  const RoomDisplay = () => {
+    if (roomName) {
+      return (
+        <div>
+          <Typography component="div">
+            Room: {roomName} {Host ? " | Master" : ""}
+          </Typography>
+        </div>
+      );
+    }
+  };
+
   const reset = () => {
     if (GameStart) {
       console.log("Game already started");
       return;
     }
     if (roomName) {
-      console.log("in");
       sockets.emit("GameStarter", roomName, (data) => {
         if (typeof data == "string") {
           console.log("issue", data);
@@ -40,35 +46,29 @@ export default function Nav() {
       console.log("error roomName not Set");
     }
   };
-  const Leave = () =>{
-    console.log('leave');
-  }
+  const Leave = () => {
+    console.log("leave", document.location.reload(true));
+  };
 
   return (
-    <AppBar position="fixed" color="primary" sx={{ bottom: "auto", top: 0 }}>
+    <AppBar position="fixed" style={{ background: "#3c4d6d" }} sx={{ bottom: "auto", top: 0 }}>
       <Toolbar>
         <Typography variant="h6" component="div">
           Red tetris
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
-        {roomName ? (
-          <Typography variant="h6" component="div">
-            Room: {roomName}
-          </Typography>
-        ) : (
-          ""
-        )}
+        {RoomDisplay()}
         <Box sx={{ flexGrow: 1 }} />
-        
+
         {Host && !gameOver ? (
-          <Button color="inherit" variant="contained" onClick={reset}>
-            <span style={{ color: "black", fontWeight: "bold" }}>Start</span>
+          <Button sx={{ mr: 2 }} color="inherit" variant="outlined" onClick={reset} size="small" disabled={GameStart}>
+            <span style={{ fontWeight: "bold" }}>Start</span>
           </Button>
         ) : (
           ""
         )}
-        <Button color="inherit" variant="contained" onClick={Leave}>
-          <span style={{ color: "black", fontWeight: "bold" }}>Leave</span>
+        <Button color="inherit" variant="outlined" onClick={Leave} size="small">
+          <span style={{ fontWeight: "bold" }}>Leave</span>
         </Button>
       </Toolbar>
     </AppBar>

@@ -8,6 +8,9 @@ import {
   UpdateTetriminosQueue,
   GameOver,
   HostUpdate,
+  TrigerSnackBar,
+  imWinner,
+  TrigerOverlay
 } from "./Store/actions";
 
 export const Sockets = ({ socket, userID, room, data, dispatch, host }) => {
@@ -21,13 +24,33 @@ export const Sockets = ({ socket, userID, room, data, dispatch, host }) => {
 
   socket.on("GStart", () => {
     dispatch(StartGame({ type: "success" }));
+    dispatch(
+      TrigerSnackBar({
+        show: true,
+        time: 4000,
+        message: "Game start",
+        severity: "success",
+        horizontal: "left",
+        vertical: "bottom",
+      })
+    );
   });
 
   /////////////////////
 
-  socket.on("joined", ({ room, users }) => {
+  socket.on("joined", ({ room, users, user_id }) => {
     console.log(`emit, joined`);
     dispatch(AddUsersGrid({ users, userID }));
+    if (user_id !== userID)
+      dispatch(
+        TrigerSnackBar({
+          show: true,
+          message: `Player joind "${users[userID].username ? `name : ${users[userID].username}` : "" || ""}"`,
+          severity: "info",
+          horizontal: "left",
+          vertical: "bottom",
+        })
+      );
   });
 
   socket.on("collided", ({ username, score, lines, user_id, playground }) => {
@@ -39,6 +62,16 @@ export const Sockets = ({ socket, userID, room, data, dispatch, host }) => {
     console.log(`emit, left`, { username, user_id, newHost });
     dispatch(RemoveUserGrid(user_id));
     dispatch(HostUpdate({ userID, newHost }));
+    dispatch(
+      TrigerSnackBar({
+        show: true,
+        time: 4000,
+        message: `Player left "${username ? `name : ${username}` : "" || ""}"`,
+        severity: "warning",
+        horizontal: "left",
+        vertical: "bottom",
+      })
+    );
   });
 
   socket.on("display", (data) => {
@@ -48,10 +81,33 @@ export const Sockets = ({ socket, userID, room, data, dispatch, host }) => {
   socket.on("gameOver", () => {
     console.log("GAMEOVER BABY !!");
     dispatch(GameOver());
+    dispatch(
+      TrigerOverlay({
+        show: true,
+        message: "Game over",
+      })
+    );
   });
 
   socket.on("win", () => {
     console.log("JE SUIS SUPER, BABY !! WIN");
+    dispatch(
+      TrigerSnackBar({
+        show: true,
+        time: 8000,
+        message: "YOU WON THE GAME !!!",
+        severity: "error",
+        horizontal: "center",
+        vertical: "bottom",
+      })
+    );
+    dispatch(imWinner());
+    dispatch(
+      TrigerOverlay({
+        show: true,
+        message: "YOU ARE THE WINNER",
+      })
+    );
   });
   /////////////////////////
 

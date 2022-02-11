@@ -20,29 +20,35 @@ export const SetGrid = (data) => {
 };
 
 export const UpdateTetriminosQueue = (data) => {
-  console.log("SET_TETRO")
+  console.log("SET_TETRO");
   return {
     type: "SET_TETRO",
-    payload: data
+    payload: data,
   };
 };
 
 export const GameOver = (data) => {
-  console.log("SET_GAMEOVER")
+  console.log("SET_GAMEOVER");
   return {
     type: "SET_GAMEOVER",
-    payload: data
+    payload: data,
+  };
+};
+
+export const imWinner = () => {
+  console.log("SET_WINNER");
+  return {
+    type: "SET_WINNER",
   };
 };
 
 export const HostUpdate = (data) => {
-  console.log("UPDATE_HOST")
+  console.log("UPDATE_HOST");
   return {
     type: "UPDATE_HOST",
-    payload: data
+    payload: data,
   };
 };
-
 
 //#endregion
 
@@ -59,11 +65,26 @@ export const StartGame = (data) => {
       type: "START_GAME",
     };
 };
+
+export const TrigerSnackBar = (data) => {
+  return {
+    type: "SNACKBAR",
+    payload: data,
+  };
+};
+
+export const TrigerOverlay = (data) => {
+  return {
+    type: "OVERLAY",
+    payload: data,
+  };
+};
+
 //#endregion
 
 //#region display users
 export const AddUsersGrid = (users) => {
-  console.log('ADD_USERS', users);
+  console.log("ADD_USERS", users);
   return {
     type: "ADD_USERS",
     payload: users,
@@ -71,7 +92,7 @@ export const AddUsersGrid = (users) => {
 };
 
 export const UpdateUsersGrid = (data) => {
-  console.log('UPDATE_USERS', data);
+  console.log("UPDATE_USERS", data);
   return {
     type: "UPDATE_USERS",
     payload: data,
@@ -79,7 +100,7 @@ export const UpdateUsersGrid = (data) => {
 };
 
 export const RemoveUserGrid = (userID) => {
-  console.log('REMOVE_USERS',userID );
+  console.log("REMOVE_USERS", userID);
   return {
     type: "REMOVE_USERS",
     payload: userID,

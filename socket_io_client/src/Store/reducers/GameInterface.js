@@ -10,6 +10,7 @@ const data = {
   display: [],
   gameOver: false,
   host: false,
+  winner: false,
 };
 
 const GameInterface = (state = data, action) => {
@@ -44,6 +45,11 @@ const GameInterface = (state = data, action) => {
       return {
         ...state,
         gameOver: true,
+      };
+    case "SET_WINNER":
+      return {
+        ...state,
+        winner: true,
       };
     case "UPDATE_HOST":
       console.log("newHost:", action.payload.newHost === action.payload.userID);

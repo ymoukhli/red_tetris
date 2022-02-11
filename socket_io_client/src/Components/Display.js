@@ -30,7 +30,7 @@ export default function Display() {
     tetriminos = tetrminosQueue.map((e, index) => {
       const Component = Shape[e];
       return (
-        <Item  key={index}>
+        <Item key={index}>
           <Component />
         </Item>
       );

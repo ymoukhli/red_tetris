@@ -32,6 +32,7 @@ module.exports = {
           room: name_room,
           users: roomObj.players,
           master: roomObj.host == userID,
+          user_id: userID,
         });
       });
       //#endregion

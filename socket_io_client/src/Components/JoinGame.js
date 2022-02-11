@@ -1,9 +1,5 @@
 import React from "react";
 import { StyledJoinGame } from "../Styles/StyledJoinGame";
-import Button from "./Button";
-import Alert from "@mui/material/Alert";
-import Grid from "@mui/material/Grid";
-import AlertTitle from "@mui/material/AlertTitle";
 import { Sockets } from "../sockets";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
@@ -11,6 +7,7 @@ import io from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
 import { connectUser } from "../Store/actions";
 import CssBaseline from "@mui/material/CssBaseline";
+import { AlertTitle, Grid, Alert, Button } from "@mui/material";
 
 export default function JoinGame() {
   //#region redux

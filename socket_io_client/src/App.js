@@ -1,13 +1,14 @@
 import * as React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Grid, Paper } from "@mui/material";
 import Nav from "./Components/Nav";
 import MasterBoard from "./Components/Board/MasterBoard";
 import OthersBoard from "./Components/Board/OthersBoard";
 import Display from "./Components/Display";
 import JoinGame from "./Components/JoinGame";
+import Snackbar from "./Components/Core/Snackbar";
+import Overlay from "./Components/Core/Overlay";
 import { useSelector } from "react-redux";
 
 const theme = createTheme();
@@ -17,6 +18,7 @@ export default function Checkout() {
 
   const joined = useSelector((state) => state.GameInterface.joined);
   const gameOver = useSelector((state) => state.GameInterface.gameOver);
+  const winner = useSelector((state) => state.GameInterface.winner);
   const sockets = useSelector((state) => state.GameInterface.sockets);
   const GameStart = useSelector((state) => state.Nav.GameStart);
   const joindUsersd = useSelector((state) => Object.keys(state.Users.users).length);
@@ -24,7 +26,8 @@ export default function Checkout() {
   //#endregion
 
   const move = ({ key }) => {
-    if (joined && GameStart && !gameOver) {
+    if (joined && GameStart && !gameOver && !winner) {
+      console.log("trigger move");
       if (key === "ArrowRight" || key === "d") {
         sockets.emit("move", { x: 1, y: 0 });
       } else if (key === "ArrowLeft" || key === "a") {
@@ -42,22 +45,16 @@ export default function Checkout() {
       <CssBaseline />
       {!joined && sockets && <JoinGame></JoinGame>}
       {joined && sockets && (
-        <div>
+        <div onKeyDown={(e) => move(e)} tabIndex="-1">
+          <Snackbar />
+          <Overlay />
           <Nav></Nav>
           <Paper variant="outlined" sx={{ my: { xs: 7, md: 6 }, p: { xs: 2, md: 3 }, mb: 4 }}>
             <React.Fragment>
-              <Grid
-                container
-                component="main"
-                sx={{ height: "89vh" }}
-                onKeyDown={(e) => move(e)}
-                tabIndex="-1"
-                justifyContent="space-around"
-                alignItems="center"
-              >
+              <Grid container spacing={{ xs: 2, md: 0 }} component="main" sx={{ height: "89vh" }} justifyContent="space-around" alignItems="center">
                 <CssBaseline />
 
-                <Grid item xs={false} sm={4} md={6} style={{ alignSelf: "center" }}>
+                <Grid item xs={false} sm={6} md={6} style={{ alignSelf: "center" }}>
                   {GameStart && (
                     <Grid container justifyContent="center" alignItems="center" style={{ textAlign: "-webkit-center" }}>
                       <Grid item lg={12} md={12} sm={12} xs={12}>
@@ -76,7 +73,7 @@ export default function Checkout() {
                     style={{ maxHeight: "90vh", overflow: "auto", alignSelf: "center" }}
                     item
                     xs={12}
-                    sm={8}
+                    sm={6}
                     md={6}
                     component={Paper}
                     elevation={2}
