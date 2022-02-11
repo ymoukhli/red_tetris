@@ -35,6 +35,15 @@ export const GameOver = (data) => {
   };
 };
 
+export const HostUpdate = (data) => {
+  console.log("UPDATE_HOST")
+  return {
+    type: "UPDATE_HOST",
+    payload: data
+  };
+};
+
+
 //#endregion
 
 //#region NAV

@@ -31,7 +31,7 @@ module.exports = {
         io.to(name_room).emit("joined", {
           room: name_room,
           users: roomObj.players,
-          master: roomObj.host == userID
+          master: roomObj.host == userID,
         });
       });
       //#endregion
@@ -45,7 +45,7 @@ module.exports = {
 
       socket.on("startGame", (room) => {
         Rooms.startGame(room);
-        io.to(room).emit('GStart')
+        io.to(room).emit("GStart");
       });
       //#endregion
 
@@ -61,8 +61,6 @@ module.exports = {
           socket.emit("respond", { Grid: playerGM.Grid, score: playerGM.score, lines: playerGM.lines });
         }
       });
-
-     
 
       socket.on("rotate", () => {
         if (playerGM.rotate(roomObj.genaratedTetros)) {
@@ -85,7 +83,7 @@ module.exports = {
           room.host = Object.keys(room.players)[0];
           console.info(`new host for room ${name_room} host is: ${room.host}`);
         }
-        io.to(name_room).emit("left", { username: playerGM.username, userID });
+        io.to(name_room).emit("left", { username: playerGM.username, user_id: userID, newHost: room.host });
         socket.leave(name_room);
         socket.leave(userID);
       });

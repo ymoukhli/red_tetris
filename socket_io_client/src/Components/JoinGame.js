@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledJoinGame} from "../Styles/StyledJoinGame";
+import { StyledJoinGame } from "../Styles/StyledJoinGame";
 import Button from "./Button";
 import Alert from "@mui/material/Alert";
 import Grid from "@mui/material/Grid";
@@ -35,7 +35,7 @@ export default function JoinGame() {
         };
         const socket = io(ENDPOINT, options);
 
-        Sockets({ socket, userID, room: e.target.room.value, data: response.data.data, dispatch });
+        Sockets({ socket, userID, room: e.target.room.value, data: response.data.data, dispatch, host: response.data.host });
       })
       .catch((err) => {
         dispatch(connectUser(err.response.data.response || err.response.data || err.response));

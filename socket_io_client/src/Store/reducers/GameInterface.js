@@ -8,7 +8,8 @@ const data = {
   lines: 0,
   grid: [],
   display: [],
-  gameOver: false
+  gameOver: false,
+  host: false,
 };
 
 const GameInterface = (state = data, action) => {
@@ -16,19 +17,21 @@ const GameInterface = (state = data, action) => {
     case "SET_TETRO":
       return {
         ...state,
-        display: action.payload.slice(0,4)
-      }
+        display: action.payload.slice(0, 4),
+      };
     case "SET_DATA":
+      console.log("host:", action.payload.host === action.payload.userID);
       return {
         joined: true,
         sockets: action.payload.socket,
         user_id: action.payload.userID,
         roomName: action.payload.room,
         data: action.payload.data,
+        host: action.payload.host === action.payload.userID,
         grid: action.payload.data.Grid.playground,
         score: action.payload.data.score,
         lines: action.payload.data.lines,
-        display: []
+        display: [],
       };
     case "SET_GRID":
       return {
@@ -38,10 +41,16 @@ const GameInterface = (state = data, action) => {
         lines: action.payload.lines,
       };
     case "SET_GAMEOVER":
-      return{
+      return {
         ...state,
-        gameOver: true
-      }
+        gameOver: true,
+      };
+    case "UPDATE_HOST":
+      console.log("newHost:", action.payload.newHost === action.payload.userID);
+      return {
+        ...state,
+        host: action.payload.newHost === action.payload.userID,
+      };
     default:
       return state;
   }

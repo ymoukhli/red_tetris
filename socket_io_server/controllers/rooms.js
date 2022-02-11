@@ -7,16 +7,14 @@ router.get("/:room/:playerName/:userID", (req, res) => {
   let playerName = req.params.playerName;
   let userID = req.params.userID;
 
-  if (!Rooms.createRoom(room, playerName, userID))
-    res
-      .status(400)
-      .json({ response: "user already exist in room or room limit" });
-  else {
+  if (!Rooms.createRoom(room, playerName, userID)) {
+    res.status(400).json({ response: "user already exist in room or room limit" });
+  } else {
     console.log("------------------");
     console.log(Rooms.data[room]);
     console.log("-------------");
 
-    res.send({ data: Rooms.data[room].players[userID], response: "Hello there !" }).status(200);
+    res.status(200).json({ data: Rooms.data[room].players[userID], host: Rooms.data[room].host });
   }
 });
 

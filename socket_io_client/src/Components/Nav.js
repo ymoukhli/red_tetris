@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+// import {AppBar, Box, Toolbar, Typography, Button} "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { StartGame } from "../Store/actions";
 
@@ -13,17 +14,19 @@ export default function Nav() {
   const roomName = useSelector((state) => state.GameInterface.roomName);
   const sockets = useSelector((state) => state.GameInterface.sockets);
   const GameStart = useSelector((state) => state.Nav.GameStart);
+  const Host = useSelector((state) => state.GameInterface.host);
+  const gameOver = useSelector((state) => state.GameInterface.gameOver);
 
   const dispatch = useDispatch();
   //#endregion
 
   const reset = () => {
-    if (GameStart){
-      console.log('Game already started');
-      return
+    if (GameStart) {
+      console.log("Game already started");
+      return;
     }
     if (roomName) {
-      console.log('in');
+      console.log("in");
       sockets.emit("GameStarter", roomName, (data) => {
         if (typeof data == "string") {
           console.log("issue", data);
@@ -37,6 +40,9 @@ export default function Nav() {
       console.log("error roomName not Set");
     }
   };
+  const Leave = () =>{
+    console.log('leave');
+  }
 
   return (
     <AppBar position="fixed" color="primary" sx={{ bottom: "auto", top: 0 }}>
@@ -53,8 +59,16 @@ export default function Nav() {
           ""
         )}
         <Box sx={{ flexGrow: 1 }} />
-        <Button color="inherit" variant="contained" onClick={reset}>
-          <span style={{ color: "black", fontWeight: "bold" }}>Start</span>
+        
+        {Host && !gameOver ? (
+          <Button color="inherit" variant="contained" onClick={reset}>
+            <span style={{ color: "black", fontWeight: "bold" }}>Start</span>
+          </Button>
+        ) : (
+          ""
+        )}
+        <Button color="inherit" variant="contained" onClick={Leave}>
+          <span style={{ color: "black", fontWeight: "bold" }}>Leave</span>
         </Button>
       </Toolbar>
     </AppBar>
