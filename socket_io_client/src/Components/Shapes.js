@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const width = 30;
+const width = 15;
 
 const Styled1 = styled.div`
   display: grid;

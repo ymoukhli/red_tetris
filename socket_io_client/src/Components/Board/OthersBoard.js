@@ -20,7 +20,7 @@ export default function OthersBoard() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent="center" alignItems="center">
+      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 6, md: 12 }} justifyContent="center" alignItems="center">
         {Object.values(data.users).map((user, index) => (
           <Grid item xs={3} sm={4} md={6} lg={12} key={index}>
             <Item elevation={1}>

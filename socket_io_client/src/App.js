@@ -26,6 +26,7 @@ export default function Checkout() {
   //#endregion
 
   const move = ({ key }) => {
+    console.log('key');
     if (joined && GameStart && !gameOver && !winner) {
       console.log("trigger move");
       if (key === "ArrowRight" || key === "d") {
@@ -45,11 +46,11 @@ export default function Checkout() {
       <CssBaseline />
       {!joined && sockets && <JoinGame></JoinGame>}
       {joined && sockets && (
-        <div onKeyDown={(e) => move(e)} tabIndex="-1">
+        <div onKeyDown={(e) => move(e)} tabIndex={-1}>
           <Snackbar />
           <Overlay />
           <Nav></Nav>
-          <Paper variant="outlined" sx={{ my: { xs: 7, md: 6 }, p: { xs: 2, md: 3 }, mb: 4 }}>
+          <Paper variant="none" sx={{ my: { xs: 7, md: 6 }, p: { xs: 2, md: 3 }, mb: 4 }}>
             <React.Fragment>
               <Grid container spacing={{ xs: 2, md: 0 }} component="main" sx={{ height: "89vh" }} justifyContent="space-around" alignItems="center">
                 <CssBaseline />
@@ -62,8 +63,8 @@ export default function Checkout() {
                       </Grid>
                     </Grid>
                   )}
-                  <Grid container spacing={1} justifyContent="space-around" alignItems="center">
-                    <Grid item lg={10} md={10} sm={12} xs={10}>
+                  <Grid container spacing={1} justifyContent="center" alignItems="center">
+                    <Grid item lg={12} md={10} sm={10} xs={10}>
                       <MasterBoard></MasterBoard>
                     </Grid>
                   </Grid>
@@ -75,7 +76,6 @@ export default function Checkout() {
                     xs={12}
                     sm={6}
                     md={6}
-                    component={Paper}
                     elevation={2}
                     square
                   >
