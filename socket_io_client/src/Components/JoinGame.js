@@ -1,18 +1,17 @@
 import React from "react";
 import { StyledJoinGame } from "../Styles/StyledJoinGame";
-import { Sockets } from "../sockets";
+import Connect from "../Utilitys/Connect";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import io from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
-import { connectUser } from "../Store/actions";
 import CssBaseline from "@mui/material/CssBaseline";
 import { AlertTitle, Grid, Alert, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function JoinGame() {
   //#region redux
 
   const joinGame = useSelector((state) => state.joinGame);
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
   //#endregion
@@ -20,24 +19,8 @@ export default function JoinGame() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const userID = uuidv4();
-    axios
-      .get(`http://localhost:4001/rooms/${e.target.room.value}/${e.target.username.value}/${userID}`)
-      .then((response) => {
-        const ENDPOINT = "http://127.0.0.1:4001/";
-        const options = {
-          query: {
-            userId: userID,
-            room: e.target.room.value,
-          },
-        };
-        const socket = io(ENDPOINT, options);
-
-        Sockets({ socket, userID, room: e.target.room.value, data: response.data.data, dispatch, host: response.data.host });
-      })
-      .catch((err) => {
-        dispatch(connectUser(err.response.data.response || err.response.data || err.response));
-        console.log(err.response);
-      });
+    Connect(e.target.room.value, e.target.username.value, userID, dispatch)
+    navigate(`#${e.target.room.value}[${e.target.username.value}]`)
   };
 
   return (

@@ -1,6 +1,7 @@
 import React from "react";
 import { AppBar, Box, Toolbar, Typography, Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { StartGame } from "../Store/actions";
 
 export default function Nav() {
@@ -13,6 +14,7 @@ export default function Nav() {
   const gameOver = useSelector((state) => state.GameInterface.gameOver);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   //#endregion
 
   const RoomDisplay = () => {
@@ -47,6 +49,7 @@ export default function Nav() {
     }
   };
   const Leave = () => {
+    navigate('/')
     console.log("leave", document.location.reload(true));
   };
 

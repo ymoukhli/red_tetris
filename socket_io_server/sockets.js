@@ -35,6 +35,11 @@ module.exports = {
           user_id: userID,
         });
       });
+      socket.on("linkChangeDetect", () => {
+        console.log("----emit leave force----");
+        socket.disconnect()
+      });
+      
       //#endregion
 
       //#region game start

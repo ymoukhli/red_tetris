@@ -9,20 +9,26 @@ import Display from "./Components/Display";
 import JoinGame from "./Components/JoinGame";
 import Snackbar from "./Components/Core/Snackbar";
 import Overlay from "./Components/Core/Overlay";
-import { useSelector } from "react-redux";
+import Connect from "./Utilitys/Connect";
+import { v4 as uuidv4 } from "uuid";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const theme = createTheme();
 
 export default function Checkout() {
   //#region redux
 
+  const user_id = useSelector((state) => state.GameInterface.user_id);
   const joined = useSelector((state) => state.GameInterface.joined);
   const gameOver = useSelector((state) => state.GameInterface.gameOver);
   const winner = useSelector((state) => state.GameInterface.winner);
   const sockets = useSelector((state) => state.GameInterface.sockets);
   const GameStart = useSelector((state) => state.Nav.GameStart);
   const joindUsersd = useSelector((state) => Object.keys(state.Users.users).length);
-
+  const location = useLocation();
+  const dispatch = useDispatch();
   //#endregion
 
   const move = ({ key }) => {
@@ -40,6 +46,26 @@ export default function Checkout() {
       }
     }
   };
+
+
+  const GetHash = (hash) => {
+    console.log('--------')
+    console.log({ user_id })
+    if(user_id)
+      sockets.emit('linkChangeDetect', user_id)
+    console.log('--------')
+    const matches = hash.match(/(#([a-zA-Z1-9_-]+)\[([a-zA-Z1-9_-]+)\])/)
+    console.log('matches->', matches);
+    if (!matches) return;
+    if (matches[2] && matches[3]) {
+      const userID = uuidv4();
+      Connect(matches[2], matches[3], userID, dispatch)
+    }
+  }
+
+  useEffect(() => {
+    GetHash(location.hash)
+  }, [location.hash])
 
   return (
     <ThemeProvider theme={theme}>
