@@ -10,7 +10,8 @@ import {
   HostUpdate,
   TrigerSnackBar,
   imWinner,
-  TrigerOverlay
+  TrigerOverlay,
+  Restart
 } from "./Store/actions";
 
 export const Sockets = ({ socket, userID, room, data, dispatch, host }) => {
@@ -76,6 +77,23 @@ export const Sockets = ({ socket, userID, room, data, dispatch, host }) => {
 
   socket.on("display", (data) => {
     dispatch(UpdateTetriminosQueue(data));
+  });
+
+
+  socket.on("restart", ({users}) => {
+    console.log("restart !!");
+    dispatch(Restart());
+    dispatch(AddUsersGrid({ users, userID }));
+    dispatch(
+      TrigerSnackBar({
+        show: true,
+        time: 4000,
+        message: `Game restart in 3s`,
+        severity: "info",
+        horizontal: "left",
+        vertical: "bottom",
+      })
+    );
   });
 
   socket.on("gameOver", () => {

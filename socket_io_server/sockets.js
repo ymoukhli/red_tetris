@@ -19,13 +19,15 @@ module.exports = {
         console.log(`from player id: ${userID} , room not exist `);
         return;
       }
-      const roomObj = Rooms.data[name_room];
-      const playerGM = Rooms.data[name_room].players[userID];
+      let roomObj = Rooms.data[name_room];
+      let playerGM = Rooms.data[name_room].players[userID];
 
       //#region  joining players data
       console.log("user connect", userID, "room", name_room);
 
       socket.on("joinRoom", () => {
+        playerGM = Rooms.data[name_room].players[userID]
+        roomObj = Rooms.data[name_room];
         socket.join(name_room);
         socket.join(userID);
         io.to(name_room).emit("joined", {
@@ -49,14 +51,27 @@ module.exports = {
         else cb(true);
       });
 
-      socket.on("startGame", (room) => {
+      socket.on("startGame", (room, cb) => {
         Rooms.startGame(room);
-        io.to(room).emit("GStart");
+        io.to(room).emit("GStart", true);
+      });
+
+      socket.on("GameRstart", (room, cb) => {
+        playerGM = Rooms.data[name_room].players[userID]
+        roomObj = Rooms.data[name_room];
+        if (!room) cb("error no Room passed");
+        if (Rooms.data[room].host !== userID) cb("error this user is not the host");
+        else {
+          Rooms.restartGmae(room)          
+          cb(true);
+        }
       });
       //#endregion
 
       //#region movments
       socket.on("move", (data) => {
+        playerGM = Rooms.data[name_room].players[userID]
+        roomObj = Rooms.data[name_room];
         if (playerGM.move(data.x, data.y, name_room, roomObj.genaratedTetros)) {
           // console.log(roomObj.genaratedTetros.length - playerGM.tetrArrayIndexer);
           if (roomObj.genaratedTetros.length - playerGM.tetrArrayIndexer <= 8) {
@@ -70,8 +85,10 @@ module.exports = {
           socket.emit("respond", { Grid: playerGM.Grid, score: playerGM.score, lines: playerGM.lines });
         }
       });
-      
+
       socket.on("rotate", () => {
+        playerGM = Rooms.data[name_room].players[userID]
+        roomObj = Rooms.data[name_room];
         if (playerGM.rotate(roomObj.genaratedTetros)) {
           socket.emit("respond", { Grid: playerGM.Grid, score: playerGM.score, lines: playerGM.lines });
         }
@@ -80,6 +97,8 @@ module.exports = {
 
       //#region leave players updates
       socket.on("disconnect", function () {
+        playerGM = Rooms.data[name_room].players[userID]
+        roomObj = Rooms.data[name_room];
         console.log(`user out ${playerGM.username} from room ${name_room}`);
         const room = Rooms.data[name_room];
         delete room.players[userID];

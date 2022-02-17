@@ -107,3 +107,15 @@ export const RemoveUserGrid = (userID) => {
   };
 };
 //#endregion
+
+
+//#region Restart
+
+export const Restart = (data) => {
+  return {
+    type: "RESTART",
+    payload: data,
+  };
+};
+
+//#endregion

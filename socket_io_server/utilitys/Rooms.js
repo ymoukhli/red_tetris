@@ -56,17 +56,32 @@ const Rooms = class {
         value.move(0, 1, room, this.data[room].genaratedTetros);
         io.to(key).emit("respond", { Grid: value.Grid, score: value.score, lines: value.lines });
       }
-    }, 10000);
+    }, 1000);
+  }
+
+  restartGmae(room) {
+    const newDataPlayers = {};
+    this.data[room].genaratedTetros = utils.RandomTetros(8);
+    for (const [key, value] of Object.entries(this.data[room].players)) {
+      newDataPlayers[key] = new GameManager(value.username, value.room, this.data[room].genaratedTetros, key);
+      delete this.data[room].players[key];
+    }
+    this.data[room].players = newDataPlayers;
+    io.to(room).emit("restart", { users: this.data[room].players });
+    console.log(this.data[room].players);
+    setTimeout(() => {
+      this.startGame(room);
+    }, 3000);
   }
 
   KarmaLines(room, user_id) {
     console.log({ room, user_id });
     const playersIds = Object.keys(this.data[room].players).filter((id) => id !== user_id);
-    console.log('send karmaLine to :' , playersIds);
+    console.log("send karmaLine to :", playersIds);
     /// add the + line in the other players Grid
-    playersIds.forEach(user_id => {
-      const playground = this.data[room].players[user_id].Grid.playground
-      utils.AddKarmLine(playground)
+    playersIds.forEach((user_id) => {
+      const playground = this.data[room].players[user_id].Grid.playground;
+      utils.AddKarmLine(playground);
     });
   }
 

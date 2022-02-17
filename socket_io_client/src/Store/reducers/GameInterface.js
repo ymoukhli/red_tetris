@@ -57,6 +57,12 @@ const GameInterface = (state = data, action) => {
         ...state,
         host: action.payload.newHost === action.payload.userID,
       };
+    case "RESTART":
+      return {
+        ...state,
+        gameOver: false,
+        winner: false,
+      };
     default:
       return state;
   }

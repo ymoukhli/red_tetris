@@ -7,11 +7,11 @@ import Overlay from "./Overlay";
 import { combineReducers } from "redux";
 const routeReducers = combineReducers({
   joinGame,
-  GameInterface,
   Nav,
   Users,
   SnackBar,
   Overlay,
+  GameInterface,
 });
 
 export default routeReducers;

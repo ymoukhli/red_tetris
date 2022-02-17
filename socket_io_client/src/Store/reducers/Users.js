@@ -17,6 +17,7 @@ const Users = (state = data, action) => {
           };
         }
       }
+      console.log(tmp);
       return {
         users: tmp,
       };

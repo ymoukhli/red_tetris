@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { connectUser } from "./Store/actions";
+import { connectUser, TrigerSnackBar } from "./Store/actions";
 
 const theme = createTheme();
 
@@ -33,9 +33,9 @@ export default function Checkout() {
   //#endregion
 
   const move = ({ key }) => {
-    // console.log('key');
+    console.log({ joined, GameStart, gameOver, winner });
     if (joined && GameStart && !gameOver && !winner) {
-      // console.log("trigger move");
+      console.log("trigger move");
       if (key === "ArrowRight" || key === "d") {
         sockets.emit("move", { x: 1, y: 0 });
       } else if (key === "ArrowLeft" || key === "a") {
@@ -62,7 +62,19 @@ export default function Checkout() {
       }
       return;
     }
-    if (matches[2] && matches[3]) {
+    if (matches[2].length > 20 || matches[3].length > 20) {
+      dispatch(connectUser("Please respect the length as 20 characters in player_name and in room_name"));
+      dispatch(
+        TrigerSnackBar({
+          show: true,
+          time: 800,
+          message: `Please respect the length as 20 characters in player_name and in room_name`,
+          severity: "error",
+          horizontal: "left",
+          vertical: "bottom",
+        })
+      );
+    } else if (matches[2] && matches[3]) {
       const userID = uuidv4();
       Connect(matches[2], matches[3], userID, dispatch);
     }
