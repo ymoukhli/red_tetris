@@ -7,7 +7,10 @@ router.get("/:room/:playerName/:userID", (req, res) => {
   let playerName = req.params.playerName;
   let userID = req.params.userID;
 
-  if (!Rooms.createRoom(room, playerName, userID)) {
+  if(Rooms.data[room] && Rooms.data[room].interval != null){
+    res.status(400).json({ response: "The room is closed" });
+  }
+  else if (!Rooms.createRoom(room, playerName, userID)) {
     res.status(400).json({ response: "user already exist in room or room limit" });
   } else {
     console.log("------------------");

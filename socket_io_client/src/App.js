@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { connectUser } from "./Store/actions";
 
 const theme = createTheme();
 
@@ -32,9 +33,9 @@ export default function Checkout() {
   //#endregion
 
   const move = ({ key }) => {
-    console.log('key');
+    // console.log('key');
     if (joined && GameStart && !gameOver && !winner) {
-      console.log("trigger move");
+      // console.log("trigger move");
       if (key === "ArrowRight" || key === "d") {
         sockets.emit("move", { x: 1, y: 0 });
       } else if (key === "ArrowLeft" || key === "a") {
@@ -47,25 +48,29 @@ export default function Checkout() {
     }
   };
 
-
   const GetHash = (hash) => {
-    console.log('--------')
-    console.log({ user_id })
-    if(user_id)
-      sockets.emit('linkChangeDetect', user_id)
-    console.log('--------')
-    const matches = hash.match(/(#([a-zA-Z1-9_-]+)\[([a-zA-Z1-9_-]+)\])/)
-    console.log('matches->', matches);
-    if (!matches) return;
+    console.log("--------");
+    console.log({ user_id });
+    if (user_id) sockets.emit("linkChangeDetect", user_id);
+    console.log("--------");
+    console.log(hash);
+    const matches = hash.match(/(#([a-zA-Z1-9_-]+)\[([a-zA-Z1-9_-]+)\])/);
+    console.log("matches->", matches);
+    if (!matches) {
+      if (hash) {
+        dispatch(connectUser("the form passed in url is bad"));
+      }
+      return;
+    }
     if (matches[2] && matches[3]) {
       const userID = uuidv4();
-      Connect(matches[2], matches[3], userID, dispatch)
+      Connect(matches[2], matches[3], userID, dispatch);
     }
-  }
+  };
 
   useEffect(() => {
-    GetHash(location.hash)
-  }, [location.hash])
+    GetHash(location.hash);
+  }, [location.hash]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -96,15 +101,7 @@ export default function Checkout() {
                   </Grid>
                 </Grid>
                 {joindUsersd ? (
-                  <Grid
-                    style={{ maxHeight: "90vh", overflow: "auto", alignSelf: "center" }}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={6}
-                    elevation={2}
-                    square
-                  >
+                  <Grid style={{ maxHeight: "90vh", overflow: "auto", alignSelf: "center" }} item xs={12} sm={6} md={6} elevation={2}>
                     <OthersBoard></OthersBoard>
                   </Grid>
                 ) : (

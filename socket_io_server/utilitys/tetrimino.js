@@ -55,7 +55,8 @@ const TETRIMINO = {
             [0,0,0]
         ],
         color : '45,255,45'
-    }
+    },
+    Z : { shape : [['Z']] , color:'220,220,220'},
 }
 
 const getRandomTetri = () => {

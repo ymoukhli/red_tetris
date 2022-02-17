@@ -18,7 +18,7 @@ const checkLineInGrid = (grid) => {
   let height = grid.length;
   let width = grid[0].length;
   for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width && grid[y][x][1] === "stay"; x++) {
+    for (let x = 0; x < width && grid[y][x][1] === "stay" && grid[y][x][0] !== "Z"; x++) {
       if (x + 1 >= width) {
         arr.push(y);
       }
@@ -27,6 +27,21 @@ const checkLineInGrid = (grid) => {
   return arr;
 };
 
+function AddKarmLine(grid) {
+  grid.shift();
+  grid.push([
+    ["Z", "stay"],
+    ["Z", "stay"],
+    ["Z", "stay"],
+    ["Z", "stay"],
+    ["Z", "stay"],
+    ["Z", "stay"],
+    ["Z", "stay"],
+    ["Z", "stay"],
+    ["Z", "stay"],
+    ["Z", "stay"],
+  ]);
+}
 
 const RandomTetros = (nb) => {
   const tetriminos = "LITRCEKI";
@@ -35,14 +50,14 @@ const RandomTetros = (nb) => {
     tetroList.push(tetriminos[Math.floor(Math.random() * tetriminos.length)]);
   }
   return tetroList;
-}
+};
 
 function checkPlayersExist(players, username) {
   const res = Object.values(players).filter((element) => {
     return element.username == username;
   });
 
-  return(res.length)
+  return res.length;
 }
 
 module.exports = {
@@ -50,4 +65,5 @@ module.exports = {
   checkLineInGrid,
   RandomTetros,
   checkPlayersExist,
+  AddKarmLine,
 };

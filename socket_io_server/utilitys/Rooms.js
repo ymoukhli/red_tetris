@@ -38,28 +38,36 @@ const Rooms = class {
   }
   startGame(room) {
     io.to(room).emit("display", this.data[room].genaratedTetros);
-     for (const [key, value] of Object.entries(this.data[room].players)) {
-        value.gameOver = false;
-      }
-    
+    for (const [key, value] of Object.entries(this.data[room].players)) {
+      value.gameOver = false;
+    }
+
     this.data[room].interval = setInterval(() => {
       let count = 0;
       const plen = Object.keys(this.data[room].players).length;
       for (const [key, value] of Object.entries(this.data[room].players)) {
         if (value.gameOver) count++;
-        if (plen > 1 && plen - count <= 1)
-        {
+        if (plen > 1 && plen - count <= 1) {
           clearInterval(this.data[room].interval);
           this.endGame(room);
-        }
-        else if (plen == 1 && plen - count <= 0)
-        {
+        } else if (plen == 1 && plen - count <= 0) {
           clearInterval(this.data[room].interval);
         }
         value.move(0, 1, room, this.data[room].genaratedTetros);
-        io.to(key).emit("respond", {Grid :value.Grid, score: value.score, lines: value.lines});
+        io.to(key).emit("respond", { Grid: value.Grid, score: value.score, lines: value.lines });
       }
-    }, 300);
+    }, 10000);
+  }
+
+  KarmaLines(room, user_id) {
+    console.log({ room, user_id });
+    const playersIds = Object.keys(this.data[room].players).filter((id) => id !== user_id);
+    console.log('send karmaLine to :' , playersIds);
+    /// add the + line in the other players Grid
+    playersIds.forEach(user_id => {
+      const playground = this.data[room].players[user_id].Grid.playground
+      utils.AddKarmLine(playground)
+    });
   }
 
   clearRoomInterval(room) {

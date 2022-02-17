@@ -37,9 +37,9 @@ module.exports = {
       });
       socket.on("linkChangeDetect", () => {
         console.log("----emit leave force----");
-        socket.disconnect()
+        socket.disconnect();
       });
-      
+
       //#endregion
 
       //#region game start
@@ -58,16 +58,19 @@ module.exports = {
       //#region movments
       socket.on("move", (data) => {
         if (playerGM.move(data.x, data.y, name_room, roomObj.genaratedTetros)) {
-          console.log(roomObj.genaratedTetros.length - playerGM.tetrArrayIndexer);
+          // console.log(roomObj.genaratedTetros.length - playerGM.tetrArrayIndexer);
           if (roomObj.genaratedTetros.length - playerGM.tetrArrayIndexer <= 8) {
             roomObj.genaratedTetros.push(...utils.RandomTetros(8));
           }
           playerGM.genaratedTetros = roomObj.genaratedTetros;
-
+          if (playerGM.KarmaLines) {
+            Rooms.KarmaLines(name_room, playerGM.id);
+            playerGM.KarmaLines = false;
+          }
           socket.emit("respond", { Grid: playerGM.Grid, score: playerGM.score, lines: playerGM.lines });
         }
       });
-
+      
       socket.on("rotate", () => {
         if (playerGM.rotate(roomObj.genaratedTetros)) {
           socket.emit("respond", { Grid: playerGM.Grid, score: playerGM.score, lines: playerGM.lines });
