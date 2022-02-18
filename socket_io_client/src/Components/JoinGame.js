@@ -1,7 +1,5 @@
 import React from "react";
 import { StyledJoinGame } from "../Styles/StyledJoinGame";
-import Connect from "../Utilitys/Connect";
-import { v4 as uuidv4 } from "uuid";
 import { useSelector, useDispatch } from "react-redux";
 import CssBaseline from "@mui/material/CssBaseline";
 import { AlertTitle, Grid, Alert, Button } from "@mui/material";
@@ -19,7 +17,6 @@ export default function JoinGame() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const userID = uuidv4();
     if (e.target.room.value.length > 20 || e.target.username.value.length > 20) {
       console.log("ooooooh boy");
       dispatch(connectUser("Please respect the length as 20 characters in player_name and in room_name"));
@@ -27,7 +24,6 @@ export default function JoinGame() {
       console.log("ooooooh boy");
       dispatch(connectUser("Please fill Input with just the allow characters (A-Z|a-z|1-9|-_)"));
     } else {
-      Connect(e.target.room.value, e.target.username.value, userID, dispatch);
       navigate(`#${e.target.room.value}[${e.target.username.value}]`);
     }
   };

@@ -8,6 +8,7 @@ export default function MasterBoard() {
   const overlay = useSelector((state) => state.Overlay.overlay);
   const sockets = useSelector((state) => state.GameInterface.sockets);
   const roomName = useSelector((state) => state.GameInterface.roomName);
+  const Host = useSelector((state) => state.GameInterface.host);
   //#endregion
 
   const reload = () => {
@@ -37,11 +38,15 @@ export default function MasterBoard() {
             Go back
           </Button>
         </Grid>
-        <Grid item lg={"auto"} style={{ textAlign: "center" }}>
-          <Button variant="contained" onClick={restart}>
-            restart
-          </Button>
-        </Grid>
+        {Host ? (
+          <Grid item lg={"auto"} style={{ textAlign: "center" }}>
+            <Button variant="contained" onClick={restart}>
+              restart
+            </Button>
+          </Grid>
+        ) : (
+          ""
+        )}
       </Grid>
     </Backdrop>
   );

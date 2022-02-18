@@ -1,6 +1,7 @@
 const { Grid } = require("./Grid");
 const { Player } = require("./Player");
 const { checkLineInGrid } = require("./utilitys");
+
 const GameManager = class {
   // ---------- constructor ------- ///
   constructor(username, room, arr, user_id) {
@@ -37,6 +38,7 @@ const GameManager = class {
         this.score += i * 10 + arr.length * 3;
         newGrid.splice(arr[i], 1);
         newGrid.unshift(Array(newGrid[0].length).fill([0, "clear"]));
+        console.log("line found chnage now");
         this.KarmaLines = true;
       }
 

@@ -78,10 +78,6 @@ module.exports = {
             roomObj.genaratedTetros.push(...utils.RandomTetros(8));
           }
           playerGM.genaratedTetros = roomObj.genaratedTetros;
-          if (playerGM.KarmaLines) {
-            Rooms.KarmaLines(name_room, playerGM.id);
-            playerGM.KarmaLines = false;
-          }
           socket.emit("respond", { Grid: playerGM.Grid, score: playerGM.score, lines: playerGM.lines });
         }
       });

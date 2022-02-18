@@ -28,6 +28,11 @@ const Nav = (state = data, action) => {
           type: "error",
         },
       };
+    case "RESTART":
+      return {
+        ...state,
+        GameStart: false,
+      };
     default:
       return state;
   }

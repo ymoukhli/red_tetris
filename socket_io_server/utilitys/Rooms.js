@@ -54,6 +54,10 @@ const Rooms = class {
           clearInterval(this.data[room].interval);
         }
         value.move(0, 1, room, this.data[room].genaratedTetros);
+        if (value.KarmaLines) {
+          this.KarmaLines(room, value.id);
+          value.KarmaLines = false;
+        }
         io.to(key).emit("respond", { Grid: value.Grid, score: value.score, lines: value.lines });
       }
     }, 1000);
@@ -71,6 +75,7 @@ const Rooms = class {
     console.log(this.data[room].players);
     setTimeout(() => {
       this.startGame(room);
+      io.to(room).emit("GStart", true);
     }, 3000);
   }
 

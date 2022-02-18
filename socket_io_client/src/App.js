@@ -33,9 +33,9 @@ export default function Checkout() {
   //#endregion
 
   const move = ({ key }) => {
-    console.log({ joined, GameStart, gameOver, winner });
+    // console.log({ joined, GameStart, gameOver, winner });
     if (joined && GameStart && !gameOver && !winner) {
-      console.log("trigger move");
+      // console.log("trigger move");
       if (key === "ArrowRight" || key === "d") {
         sockets.emit("move", { x: 1, y: 0 });
       } else if (key === "ArrowLeft" || key === "a") {
@@ -44,6 +44,9 @@ export default function Checkout() {
         sockets.emit("move", { x: 0, y: 1 });
       } else if (key === "ArrowUp" || key === "w") {
         sockets.emit("rotate");
+      } else if (key === " ") {
+        console.log("space");
+        sockets.emit("move", { x: 0, y: 3  });
       }
     }
   };
