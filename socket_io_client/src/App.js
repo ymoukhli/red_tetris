@@ -31,7 +31,6 @@ export default function Checkout() {
   //#endregion
 
   const move = ({ key }) => {
-    console.log('key');
     if (joined && GameStart && !gameOver && !winner) {
       console.log("trigger move");
       if (key === "ArrowRight" || key === "d") {

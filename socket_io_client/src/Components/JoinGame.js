@@ -13,13 +13,14 @@ export default function JoinGame() {
   const joinGame = useSelector((state) => state.joinGame);
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   //#endregion
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const userID = uuidv4();
-    Connect(e.target.room.value, e.target.username.value, userID, dispatch)
+    // Connect(e.target.room.value, e.target.username.value, userID, dispatch)
+    console.log(e.target)
     navigate(`#${e.target.room.value}[${e.target.username.value}]`)
   };
 
