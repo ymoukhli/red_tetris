@@ -16,7 +16,6 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 const theme = createTheme();
-
 export default function Checkout() {
   //#region redux
 
@@ -63,9 +62,9 @@ export default function Checkout() {
     }
   }
 
-  useEffect(() => {
-    GetHash(location.hash)
-  }, [location.hash])
+  // useEffect(() => {
+  //   GetHash(location.hash)
+  // }, [location.hash])
 
   return (
     <ThemeProvider theme={theme}>
