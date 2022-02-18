@@ -20,7 +20,6 @@ export default function JoinGame() {
     e.preventDefault();
     const userID = uuidv4();
     // Connect(e.target.room.value, e.target.username.value, userID, dispatch)
-    console.log(e.target)
     navigate(`#${e.target.room.value}[${e.target.username.value}]`)
   };
 

@@ -1,6 +1,6 @@
 import {fireEvent, render,screen} from '@testing-library/react'
 import { Provider } from 'react-redux';
-import JoinGame from '../Components/JoinGame';
+import JoinGame from '../../Components/JoinGame';
 import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk';
 
@@ -55,15 +55,15 @@ const store = mockStore({
 }
 })
 
+
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
    useNavigate: () => jest.fn(),
    useLocation: () => jest.fn(),
  }))
- 
 describe('joingame unit test', () => {
 it('should render', () => {
-    render(
+    const wrapper = render(
           <Provider store={store}>
               <JoinGame/>
           </Provider>
@@ -75,6 +75,7 @@ it('should render', () => {
         const room = screen.getByPlaceholderText(/room/i);
         fireEvent.change(room, {target: {value: 'roro'}});
         expect(screen.getByPlaceholderText(/room/i).value).toBe('roro');
-        fireEvent.click(screen.getByText("submit"));
+        // const spy = wrapper.instance();
+        // fireEvent.click(screen.getByText("submit"));
     })
   })
