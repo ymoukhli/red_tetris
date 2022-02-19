@@ -50,7 +50,7 @@ export default function JoinGame() {
                     </div>
                   </div>
                   <div className="action">
-                    <Button type="submit" text="submit">
+                    <Button type="submit" text="submit" data-testid="submit">
                       submit
                     </Button>
                   </div>

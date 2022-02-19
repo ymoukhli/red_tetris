@@ -75,6 +75,7 @@ it('should render', () => {
         const room = screen.getByPlaceholderText(/room/i);
         fireEvent.change(room, {target: {value: 'roro'}});
         expect(screen.getByPlaceholderText(/room/i).value).toBe('roro');
+        fireEvent.click(screen.getByText("submit"))
         // const spy = wrapper.instance();
         // fireEvent.click(screen.getByText("submit"));
     })
